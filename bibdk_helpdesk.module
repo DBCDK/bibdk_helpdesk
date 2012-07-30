@@ -19,10 +19,10 @@ function bibdk_helpdesk_menu() {
     'access callback'   => TRUE,
     'type'              => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['helpdesk/queried'] = array(
+  $items['helpdesk/queried'] = array( // if we provide our own result page?
     'title'             => 'Helpdesk',
     'description'       => 'Library helpdesk form result.',
-    'page callback'     => 'bibdk_helpdesk_execute_search',
+    'page callback'     => 'bibdk_helpdesk_execute',
     'page arguments'    => array(),
     'access callback'   => TRUE,
     'type'              => MENU_LOCAL_TASK,
@@ -89,24 +89,6 @@ function bibdk_helpdesk_theme() {
 }
 
 
-function getDirectoryList ($directory) {
-  // create an array to hold directory list
-  $results = array();
-  // create a handler for the directory
-  $handler = opendir($directory);
-  // open directory and walk through the filenames
-  while ($file = readdir($handler)) {
-    // if file isn't this directory or its parent, add it to the results
-    if ($file != "." && $file != "..") {
-      $results[] = $file;
-    }
-  }
-  // tidy up: close the handler
-  closedir($handler);
-  // done!
-  return $results;
-}
-
 /**
  * Process a block search form submission.
  */
@@ -126,7 +108,7 @@ function bibdk_helpdesk_submit($form, &$form_state) {
  * @param String $json
  * @return array
  */
-function bibdk_helpdesk_execute_search() {
+function bibdk_helpdesk_execute() {
   $result = array();
   $markup = theme('theme_bibdk_helpdesk_result', array('result' => $result));
   return $markup;
