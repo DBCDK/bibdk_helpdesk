@@ -1,0 +1,14 @@
+
+name = Bibliotek.dk helpdesk form
+description = Provide a form for the library helpdesk, and a teaser block.
+core = 7.x
+package = "Bibliotek.dk"
+
+; dependencies[] = ting_search
+; dependencies[] = i18n_string
+; wrapper functions has been made for i18n functions
+
+; files[] = bibdk_custom_search.test
+; files[] = bibdk_custom_search.i18n.inc
+
+; configure = admin/config/search/bibdk_custom_search
