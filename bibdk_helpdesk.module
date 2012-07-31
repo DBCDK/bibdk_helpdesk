@@ -16,7 +16,7 @@ function bibdk_helpdesk_menu() {
     'description'       => 'Library helpdesk form.',
     'page callback'     => 'drupal_get_form',
     'page arguments'    => array('bibdk_helpdesk_form'),
-    'access callback'   => TRUE,
+    'access arguments'  => array('access content'),
     'type'              => MENU_DEFAULT_LOCAL_TASK,
   );
   $items['helpdesk/queried'] = array( // if we provide our own result page?
@@ -24,7 +24,7 @@ function bibdk_helpdesk_menu() {
     'description'       => 'Library helpdesk form result.',
     'page callback'     => 'bibdk_helpdesk_execute',
     'page arguments'    => array(),
-    'access callback'   => TRUE,
+    'access arguments'  => array('access content'),
     'type'              => MENU_LOCAL_TASK,
   );
   return $items;
