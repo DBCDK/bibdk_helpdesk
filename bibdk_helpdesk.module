@@ -18,14 +18,6 @@ function bibdk_helpdesk_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['helpdesk/queried'] = array(// if we provide our own result page?
-    'title' => 'Helpdesk',
-    'description' => 'Library helpdesk form result.',
-    'page callback' => 'bibdk_helpdesk_execute',
-    'page arguments' => array(),
-    'access arguments' => array('access content'),
-    'type' => MENU_LOCAL_TASK,
-  );
   return $items;
 }
 
@@ -98,20 +90,12 @@ function bibdk_helpdesk_teaser_form() {
     '#description' => t('You can contact a librarian, if you need a personalized service.'),
     '#tree' => TRUE,
   );
-  //$form['actions'] = array('#type' => 'actions');
   $form['bibdk_helpdesk_teaser']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Ask the helpdesk'),
   );
-  $form['#submit'][] = '_bibdk_helpdesk_teaser_form_submit';
-  //$form['#theme'] = 'theme_bibdk_helpdesk_teaser_form';
+  $form['#action'] = 'helpdesk';
   return $form;
-}
-
-function _bibdk_helpdesk_teaser_form_submit() {
-  $form_state['redirect'] = FALSE;
-  $url = 'helpdesk';
-  drupal_goto($url, array());
 }
 
 function bibdk_helpdesk_form() {
@@ -140,7 +124,6 @@ function bibdk_helpdesk_form() {
   $form['bibdk_helpdesk']['TimeLimitId'] = array(
     '#type' => 'select',
     '#title' => t('Time limit'),
-    //'#title_display'  => 'invisible',
     '#options' => array(
       t('No time limit'),
       "2 " . t('Hours'),
