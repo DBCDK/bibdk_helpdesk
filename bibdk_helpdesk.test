@@ -87,8 +87,8 @@ class BibdkHelpdeskTeaserblockTestcase extends DrupalWebTestCase {
   /**
    * Test if link in block redirects to helpdesk 
    */
-  public function testTeaserSubmit(){
-    $this->drupalPost('', NULL, t('Ask the helpdesk'));
+  public function testTeaserLink(){
+    $this->clickLink(t('Ask the helpdesk'));
     $this->assertText('Ask Library helpdesk', t('Teaserblock redirects to /helpdesk'));
   }
 }

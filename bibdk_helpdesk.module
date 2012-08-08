@@ -7,7 +7,6 @@
 
 /**
  * Implements hook_menu();
- * @return boolean
  */
 function bibdk_helpdesk_menu() {
   $items['helpdesk'] = array(
@@ -48,7 +47,8 @@ function bibdk_helpdesk_block_view($delta = '') {
     case 'bibdk-helpdesk-teaser':
       $block['subject'] = t('Library Helpdesk');
       $block['content'] = theme('bibdk_helpdesk_block', array(
-        'form' => drupal_get_form('bibdk_helpdesk_teaser_form'),
+        'description' => t('You can contact a librarian, if you need a personalized service.'),
+        'link' => l("Ask the helpdesk", "helpdesk", array('attributes' => array('class' => array('bibdk-popup-link')))),
         'image_css' => $image)
       );
       break;
@@ -82,22 +82,10 @@ function bibdk_helpdesk_theme() {
   return $theme_array;
 }
 
-function bibdk_helpdesk_teaser_form() {
 
-  $form['bibdk_helpdesk_teaser'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Library helpdesk'),
-    '#description' => t('You can contact a librarian, if you need a personalized service.'),
-    '#tree' => TRUE,
-  );
-  $form['bibdk_helpdesk_teaser']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Ask the helpdesk'),
-  );
-  $form['#action'] = 'helpdesk';
-  return $form;
-}
-
+/**
+ * Implements hook_form().
+ */
 function bibdk_helpdesk_form() {
   $form['bibdk_helpdesk'] = array(
     '#type' => 'fieldset',
@@ -209,9 +197,7 @@ function bibdk_helpdesk_form() {
 }
 
 /**
- *
  * remove required validation from Purpose ID  
- * 
  */
 function _remove_validation($element){
   _bibdk_helpdesk_disable_validation($element);
