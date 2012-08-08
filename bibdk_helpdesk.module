@@ -138,11 +138,11 @@ function bibdk_helpdesk_form() {
     '#type' => 'textarea',
     '#title' => t('My question is'),
     '#default_value' => '',
+    '#required' => TRUE
   );
   
   $form['bibdk_helpdesk']['PurposeId'] = array(
     "#type" => "fieldset",
-    "#title" => "help",
     "#after_build" => array("_remove_validation"),
     
   );
@@ -199,9 +199,9 @@ function bibdk_helpdesk_form() {
     '#required' => TRUE
   );
   
-  $form['submit'] = array(
+  $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Ask the helpdesk'),
+    '#value' => t('Send'),
   );
 
   $form['#theme'] = 'theme_bibdk_helpdesk_form';
@@ -235,6 +235,9 @@ function _bibdk_helpdesk_disable_validation(&$element) {
 function bibdk_helpdesk_form_validate($form, &$form_state) {
   if (!valid_email_address($form_state['values']['CustomerEmail'])) {
     form_set_error("CustomerEmail", t("Email needs to be a valid email"));
+  }
+  if (!isset($form_state['values']['PurposeId'])) {
+    form_set_error("PurposeId", t("Please state a purpose"));
   }
 }
 
