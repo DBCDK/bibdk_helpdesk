@@ -12,12 +12,16 @@ function bibdk_helpdesk_menu() {
   $items['helpdesk'] = array(
     'title' => 'Helpdesk',
     'description' => 'Library helpdesk form.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('bibdk_helpdesk_form'),
+    'page callback' => 'bibdk_helpdesk_page',
     'access arguments' => array('access content'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   return $items;
+}
+
+function bibdk_helpdesk_page(){
+  drupal_set_title(t("Helpdesk"));
+  return drupal_get_form('bibdk_helpdesk_form');
 }
 
 /**
@@ -62,6 +66,15 @@ function bibdk_helpdesk_block_view($delta = '') {
 function bibdk_helpdesk_theme() {
   $path = drupal_get_path('module', 'bibdk_helpdesk') . '/theme';
   $theme_array = array(
+    'helpdesk' =>  array(
+      'path' => $path,
+      'template' => 'page--helpdesk',
+      'arguments' => array(
+        'content' => NULL,
+        'show_blocks' => FALSE,
+        'show_messages' => TRUE,
+      )
+     ),
     'bibdk_helpdesk_block' => array(
       'render element' => 'elements',
       'path' => $path,
@@ -249,4 +262,30 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
 
   $status = $curl->get_status();
   drupal_goto($status['redirect_url']);
+}
+
+
+function my_module_theme_registry_alter(&$theme_registry) {
+  $theme_registry_copy = $theme_registry;
+  _theme_process_registry($theme_registry_copy, 'phptemplate', 'theme_engine', 'my_custom_theme', MY_MODULE_PATH);
+  $theme_registry += array_diff_key($theme_registry_copy, $theme_registry);
+
+  // A list of templates the module will provide templates for
+  $hooks = array('page');
+  foreach ($hooks as $h) {
+    // Add the key 'theme paths' if it doesn't exist in this theme's registry
+    if (!isset($theme_registry[$h]['theme paths'])) {
+      $theme_registry[$h]['theme paths'] = array();
+    }
+
+    //Shift this module's directory to the top of the theme path list 
+    if(is_array($theme_registry[$h]['theme paths'])) {
+      $first_element = array_shift($theme_registry[$h]['theme paths']);
+      if ($first_element) {
+        array_unshift($theme_registry[$h]['theme paths'], $first_element, MY_MODULE_PATH);
+      } else {
+        array_unshift($theme_registry[$h]['theme paths'], MY_MODULE_PATH);
+      }
+    }
+  }
 }
