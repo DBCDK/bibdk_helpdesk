@@ -261,7 +261,13 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
   }
 
   $status = $curl->get_status();
-  drupal_goto("http://biblioteksvagten.dk/kvittering.asp");
+  if ($status['http_code'] == 302){
+    drupal_goto("http://biblioteksvagten.dk/kvittering.asp");
+  }
+  else {
+    drupal_set_message("Sorry we could not submit your query, please try again later", "error");
+    watchdog("submit", "ERROR: cannot submit to helpdesk", $status, WATCHDOG_ERROR);
+  }
 }
 
 
