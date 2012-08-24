@@ -261,7 +261,7 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
   }
 
   $status = $curl->get_status();
-  drupal_goto($status['redirect_url']);
+  drupal_goto("http://biblioteksvagten.dk/kvittering.asp");
 }
 
 
