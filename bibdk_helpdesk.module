@@ -50,15 +50,19 @@ function bibdk_helpdesk_block_view($delta = '') {
   switch ($delta) {
     case 'bibdk-helpdesk-teaser':
       $block['subject'] = t('Library Helpdesk');
-      $block['content'] = theme('bibdk_helpdesk_block', array(
-        'description' => t('You can contact a librarian, if you need a personalized service.'),
-        'link' => l("Ask the helpdesk", "helpdesk", array('attributes' => array('class' => array('bibdk-popup-link'), "rel" => array('userhelp')))), 
-        'image_css' => $image)
-      );
+      $block['content'] =
+        theme('bibdk_helpdesk_block', array(
+            'description' => t('You can contact a librarian, if you need a personalized service.'),
+            'link' => l("Ask the helpdesk", "helpdesk", array('attributes' => array('class' => array('bibdk-popup-link','text-white'), "rel" => array('userhelp')))),
+            'image' => $dir.'/'.$image.'.png',
+            'title' =>  theme('bibdk_helpdesk_title'),)
+        );
       break;
   }
   return $block;
 }
+
+
 
 /**
  * Implements hook_theme().
@@ -91,8 +95,21 @@ function bibdk_helpdesk_theme() {
       'path' => $path,
       'template' => 'bibdk-helpdesk-result',
     ),
+     'bibdk_helpdesk_title' => array(
+      'variables' => array(
+        'hest'    => NULL,
+      ),
+      ),
   );
   return $theme_array;
+}
+
+
+/**
+ * title theme function
+ **/
+function theme_bibdk_helpdesk_title() {
+  return l(t('Spørg biblioteksvagten'),'bibdk_helpdesk',array('attributes' => array('class' => array('bibdk-popup-link'))));
 }
 
 
@@ -141,11 +158,11 @@ function bibdk_helpdesk_form() {
     '#default_value' => '',
     '#required' => TRUE
   );
-  
+
   $form['bibdk_helpdesk']['PurposeId'] = array(
     "#type" => "fieldset",
     "#after_build" => array("_remove_validation"),
-    
+
   );
   $form['bibdk_helpdesk']['PurposeId'][] = array(
     '#type' => 'radios',
@@ -153,13 +170,13 @@ function bibdk_helpdesk_form() {
     '#options' => array(
       '1' => t('General interest / hobby'),
       '6' => t('Business'),
-      
+
     ),
     '#parents' => array('PurposeId'),
     '#spawned' => TRUE,
   );
 
-  
+
   $form['bibdk_helpdesk']['PurposeId'][] = array(
     '#type' => 'radios',
     '#title' => t('or in connection with assignment for'),
@@ -170,7 +187,7 @@ function bibdk_helpdesk_form() {
       '5' => t('University education or research'),
     ),
     '#spawned' => TRUE,
-    '#parents' => array('PurposeId'), 
+    '#parents' => array('PurposeId'),
   );
   $form['bibdk_helpdesk']['CustomerName'] = array(
     '#type' => 'textfield',
@@ -199,7 +216,7 @@ function bibdk_helpdesk_form() {
     '#default_value' => '',
     '#required' => TRUE
   );
-  
+
   $form['actions']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Send'),
@@ -210,7 +227,7 @@ function bibdk_helpdesk_form() {
 }
 
 /**
- * remove required validation from Purpose ID  
+ * remove required validation from Purpose ID
  */
 function _remove_validation($element){
   _bibdk_helpdesk_disable_validation($element);
@@ -284,7 +301,7 @@ function my_module_theme_registry_alter(&$theme_registry) {
       $theme_registry[$h]['theme paths'] = array();
     }
 
-    //Shift this module's directory to the top of the theme path list 
+    //Shift this module's directory to the top of the theme path list
     if(is_array($theme_registry[$h]['theme paths'])) {
       $first_element = array_shift($theme_registry[$h]['theme paths']);
       if ($first_element) {
