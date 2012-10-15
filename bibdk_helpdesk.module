@@ -19,7 +19,7 @@ function bibdk_helpdesk_menu() {
   return $items;
 }
 
-function bibdk_helpdesk_page(){
+function bibdk_helpdesk_page() {
   drupal_set_title(t("Helpdesk"));
   return drupal_get_form('bibdk_helpdesk_form');
 }
@@ -33,6 +33,11 @@ function bibdk_helpdesk_block_info() {
     'cache' => DRUPAL_NO_CACHE,
     'description' => 'Library helpdesk teaser form.',
   );
+  $blocks['bibdk-helpdesk-header-link'] = array(
+    'info' => t('Bibliotek.dk : Helpdesk header link'),
+    'cache' => DRUPAL_NO_CACHE,
+    'description' => 'Link to helpdesk in header region',
+  );
   return $blocks;
 }
 
@@ -41,8 +46,9 @@ function bibdk_helpdesk_block_info() {
  */
 function bibdk_helpdesk_block_view($delta = '') {
   drupal_add_css(drupal_get_path('module', 'bibdk_helpdesk') . '/css/bibdk_helpdesk.css');
-
-  $dir = drupal_get_path('module', 'bibdk_helpdesk') . '/images/normal';
+  
+  $module_path = drupal_get_path('module', 'bibdk_helpdesk') . '/images';
+  $dir = drupal_get_path('module', 'bibdk_helpdesk') . $module_path . '/normal';
   $images = file_scan_directory($dir, '/.*\.png$/', array('key' => 'name'));
   $image = array_rand($images);
 
@@ -51,18 +57,25 @@ function bibdk_helpdesk_block_view($delta = '') {
     case 'bibdk-helpdesk-teaser':
       $block['subject'] = t('Library Helpdesk');
       $block['content'] =
-        theme('bibdk_helpdesk_block', array(
-            'description' => t('You can contact a librarian, if you need a personalized service.'),
-            'link' => l("Ask the helpdesk", "helpdesk", array('attributes' => array('class' => array('bibdk-popup-link','text-white'), "rel" => array('userhelp')))),
-            'image' => $dir.'/'.$image.'.png',
-            'title' =>  theme('bibdk_helpdesk_title'),)
-        );
+         theme('bibdk_helpdesk_block', array(
+        'description' => t('You can contact a librarian, if you need a personalized service.'),
+        'link' => l("Ask the helpdesk", "helpdesk", array('attributes' => array('class' => array('bibdk-popup-link', 'text-white'), "rel" => array('userhelp')))),
+        'image' => $dir . '/' . $image . '.png',
+        'title' => theme('bibdk_helpdesk_title'),)
+      );
+      break;
+    case 'bibdk-helpdesk-header-link':
+      $block['content'] =
+        theme('bibdk_helpdesk_header_link', array(
+          'title' => t('ask_helpdesk'),
+          'path' => 'helpdesk',
+          'image' => $module_path . '/header/vagt.png',
+        )
+      );
       break;
   }
   return $block;
 }
-
-
 
 /**
  * Implements hook_theme().
@@ -70,7 +83,7 @@ function bibdk_helpdesk_block_view($delta = '') {
 function bibdk_helpdesk_theme() {
   $path = drupal_get_path('module', 'bibdk_helpdesk') . '/theme';
   $theme_array = array(
-    'helpdesk' =>  array(
+    'helpdesk' => array(
       'path' => $path,
       'template' => 'page--helpdesk',
       'arguments' => array(
@@ -78,12 +91,18 @@ function bibdk_helpdesk_theme() {
         'show_blocks' => FALSE,
         'show_messages' => TRUE,
       )
-     ),
+    ),
     'bibdk_helpdesk_block' => array(
       'render element' => 'elements',
       'path' => $path,
       'template' => 'bibdk-helpdesk-block',
       'variables' => array('image_css', 'form'),
+    ),
+    'bibdk_helpdesk_header_link' => array(
+      'render element' => 'elements',
+      'path' => $path,
+      'template' => 'bibdk-helpdesk-header-link',
+      'variables' => array(),
     ),
     'theme_bibdk_helpdesk_form' => array(
       'render element' => 'form',
@@ -95,23 +114,21 @@ function bibdk_helpdesk_theme() {
       'path' => $path,
       'template' => 'bibdk-helpdesk-result',
     ),
-     'bibdk_helpdesk_title' => array(
+    'bibdk_helpdesk_title' => array(
       'variables' => array(
-        'hest'    => NULL,
+        'hest' => NULL,
       ),
-      ),
+    ),
   );
   return $theme_array;
 }
 
-
 /**
  * title theme function
- **/
+ * */
 function theme_bibdk_helpdesk_title() {
-  return l(t('Spørg biblioteksvagten'),'bibdk_helpdesk',array('attributes' => array('class' => array('bibdk-popup-link'))));
+  return l(t('Spørg biblioteksvagten'), 'bibdk_helpdesk', array('attributes' => array('class' => array('bibdk-popup-link'))));
 }
-
 
 /**
  * Implements hook_form().
@@ -162,7 +179,6 @@ function bibdk_helpdesk_form() {
   $form['bibdk_helpdesk']['PurposeId'] = array(
     "#type" => "fieldset",
     "#after_build" => array("_remove_validation"),
-
   );
   $form['bibdk_helpdesk']['PurposeId'][] = array(
     '#type' => 'radios',
@@ -170,7 +186,6 @@ function bibdk_helpdesk_form() {
     '#options' => array(
       '1' => t('General interest / hobby'),
       '6' => t('Business'),
-
     ),
     '#parents' => array('PurposeId'),
     '#spawned' => TRUE,
@@ -229,7 +244,7 @@ function bibdk_helpdesk_form() {
 /**
  * remove required validation from Purpose ID
  */
-function _remove_validation($element){
+function _remove_validation($element) {
   _bibdk_helpdesk_disable_validation($element);
   return $element;
 }
@@ -238,9 +253,10 @@ function _remove_validation($element){
  * Recursive function.
  * Removes required validation flag for specified form element and all its children.
  */
+
 function _bibdk_helpdesk_disable_validation(&$element) {
   unset($element['#needs_validation']);
-  foreach(element_children($element) as $key) {
+  foreach (element_children($element) as $key) {
     _bibdk_helpdesk_disable_validation($element[$key]);
   }
 }
@@ -278,7 +294,7 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
   }
 
   $status = $curl->get_status();
-  if ($status['http_code'] == 302){
+  if ($status['http_code'] == 302) {
     drupal_goto("http://biblioteksvagten.dk/kvittering.asp");
   }
   else {
@@ -286,7 +302,6 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
     watchdog("submit", "ERROR: cannot submit to helpdesk", $status, WATCHDOG_ERROR);
   }
 }
-
 
 function my_module_theme_registry_alter(&$theme_registry) {
   $theme_registry_copy = $theme_registry;
@@ -302,11 +317,12 @@ function my_module_theme_registry_alter(&$theme_registry) {
     }
 
     //Shift this module's directory to the top of the theme path list
-    if(is_array($theme_registry[$h]['theme paths'])) {
+    if (is_array($theme_registry[$h]['theme paths'])) {
       $first_element = array_shift($theme_registry[$h]['theme paths']);
       if ($first_element) {
         array_unshift($theme_registry[$h]['theme paths'], $first_element, MY_MODULE_PATH);
-      } else {
+      }
+      else {
         array_unshift($theme_registry[$h]['theme paths'], MY_MODULE_PATH);
       }
     }
