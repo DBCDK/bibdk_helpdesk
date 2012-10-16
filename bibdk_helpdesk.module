@@ -54,9 +54,9 @@ function bibdk_helpdesk_block_info() {
 function bibdk_helpdesk_block_view($delta = '') {
 
   $block = array();
-  
+
   switch ($delta) {
-    
+
     case 'bibdk-helpdesk-teaser':
       $block['subject'] = t('Library Helpdesk');
       $block['content'] =
@@ -68,9 +68,9 @@ function bibdk_helpdesk_block_view($delta = '') {
         )
       );
       break;
-    
+
     case 'header_action':
-      $block['subject'] = t('Library Helpdesk');
+      $block['subject'] = "<none>";
       $block['content'] = _bibdk_helpdesk_create_render_array($delta);
       break;
   }
@@ -84,10 +84,11 @@ function bibdk_helpdesk_block_view($delta = '') {
  */
 function _bibdk_helpdesk_create_render_array($delta) {
 
+  $render = array();
+
   switch ($delta) {
     case 'header_action':
-
-      $render_array = array(
+      $render = array(
         'link' => array(
           '#type' => 'link',
           '#title' => t("Ask Helpdesk"),
@@ -100,12 +101,12 @@ function _bibdk_helpdesk_create_render_array($delta) {
       );
       break;
   }
-  return $render_array;
+  return $render;
 }
 
 
 /**
- * Helper function: Returns random image path 
+ * Helper function: Returns random image path
  * params: $size is the subfolder within /images/
  */
 function _bibdk_get_random_helpdesk_image($size) {
