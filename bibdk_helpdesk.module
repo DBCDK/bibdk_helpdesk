@@ -6,29 +6,28 @@
  */
 
 
+
 /**
  * Implements hook_menu();
- * @return boolean
  */
 function bibdk_helpdesk_menu() {
-  $items['helpdesk'] = array(
-    'title'             => 'Helpdesk',
-    'description'       => 'Library helpdesk form.',
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => array('bibdk_helpdesk_form'),
-    'access arguments'  => array('access content'),
-    'type'              => MENU_DEFAULT_LOCAL_TASK,
-  );
-  $items['helpdesk/queried'] = array( // if we provide our own result page?
-    'title'             => 'Helpdesk',
-    'description'       => 'Library helpdesk form result.',
-    'page callback'     => 'bibdk_helpdesk_execute',
-    'page arguments'    => array(),
-    'access arguments'  => array('access content'),
-    'type'              => MENU_LOCAL_TASK,
+  $items['overlay/helpdesk'] = array(
+    'title' => 'Helpdesk',
+    'description' => 'Library helpdesk form.',
+    'page callback' => 'bibdk_helpdesk_page',
+    'access arguments' => array('access content'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   return $items;
 }
+/**
+ * Page callback: 'helpdesk'
+ */
+function bibdk_helpdesk_page() {
+  drupal_set_title(t("Helpdesk"));
+  return drupal_get_form('bibdk_helpdesk_form');
+}
+
 
 
 /**
@@ -36,23 +35,43 @@ function bibdk_helpdesk_menu() {
  */
 function bibdk_helpdesk_block_info() {
   $blocks['bibdk-helpdesk-teaser'] = array(
-      'info'        => t('Bibliotek.dk : Library helpdesk teaser'),
-      'cache'       => DRUPAL_NO_CACHE,
-      'description' => 'Library helpdesk teaser form.',
-    );
+    'info' => t('Bibdk: Helpdesk teaser'),
+    'cache' => DRUPAL_NO_CACHE,
+    'description' => t('Library helpdesk teaser form.'),
+  );
+  $blocks['header_action'] = array(
+    'info' => t('Bibdk: Helpdesk header action'),
+    'description' => t('Link to helpdesk in header region'),
+  );
   return $blocks;
 }
+
 
 
 /**
  * Implements hook_block_view().
  */
 function bibdk_helpdesk_block_view($delta = '') {
+
   $block = array();
+
   switch ($delta) {
+
     case 'bibdk-helpdesk-teaser':
       $block['subject'] = t('Library Helpdesk');
-      $block['content'] = drupal_get_form('bibdk_helpdesk_teaser_form');
+      $block['content'] =
+         theme('bibdk_helpdesk_block', array(
+          'description' => t('You can contact a librarian, if you need a personalized service.'),
+          'link' => l("Ask helpdesk", "overlay/helpdesk", array('attributes' => array('class' => array('bibdk-popup-link', 'text-white'), "rel" => array('userhelp')))),
+          'image' => _bibdk_get_random_helpdesk_image('normal'),
+          'title' => theme('bibdk_helpdesk_title'),
+        )
+      );
+      break;
+
+    case 'header_action':
+      $block['subject'] = "<none>";
+      $block['content'] = _bibdk_helpdesk_create_render_array($delta);
       break;
   }
   return $block;
@@ -60,115 +79,270 @@ function bibdk_helpdesk_block_view($delta = '') {
 
 
 /**
+ * Helper function: Creates render arrays for blocks
+ * @return array
+ */
+function _bibdk_helpdesk_create_render_array($delta) {
+
+  $render = array();
+
+  switch ($delta) {
+    case 'header_action':
+      $render = array(
+        'link' => array(
+          '#type' => 'link',
+          '#title' => t("Ask Helpdesk"),
+          '#href' => 'overlay/helpdesk',
+          '#attributes' => array(
+            'class' => array('bibdk-popup-link'),
+            'rel' => array('userhelp'),
+          ),
+        ),
+        'image' => array(
+          '#theme' => 'image',
+          '#path' => _bibdk_get_random_helpdesk_image('header'),
+        ),
+      );
+      break;
+  }
+  return $render;
+}
+
+
+/**
+ * Helper function: Returns random image path
+ * params: $size is the subfolder within /images/
+ */
+function _bibdk_get_random_helpdesk_image($size) {
+  $images_path = drupal_get_path('module', 'bibdk_helpdesk') . '/images/' . $size;
+  $images = file_scan_directory($images_path, '/./', array('key' => 'filename'));
+  $image = array_rand($images);
+
+  return $images_path . '/' . $image;
+}
+
+
+
+/**
  * Implements hook_theme().
  */
 function bibdk_helpdesk_theme() {
-  $dir = drupal_get_path('module', 'bibdk_helpdesk') . '/images/normal';
-  $images = file_scan_directory($dir, '/.*\.png$/', array('key'=>'name'));
-  $image = array_rand($images);
   $path = drupal_get_path('module', 'bibdk_helpdesk') . '/theme';
   $theme_array = array(
-    'theme_bibdk_helpdesk_teaser_form' => array(
-      'render element'  => 'form',
-      'path'            => $path,
-      'template'        => 'bibdk-helpdesk-teaser-form',
-      'variables'       => array('form'=>drupal_get_form('bibdk_helpdesk_teaser_form') ,'image_css'=>$image),
+    'helpdesk' => array(
+      'path' => $path,
+      'template' => 'page--helpdesk',
+      'arguments' => array(
+        'content' => NULL,
+        'show_blocks' => FALSE,
+        'show_messages' => TRUE,
+      )
+    ),
+    'bibdk_helpdesk_block' => array(
+      'render element' => 'elements',
+      'path' => $path,
+      'template' => 'bibdk-helpdesk-block',
+      'variables' => array('image_css', 'form'),
+    ),
+    'bibdk_helpdesk_header_link' => array(
+      'path' => $path,
+      'template' => 'bibdk-helpdesk-header-link',
+      'variables' => array(),
     ),
     'theme_bibdk_helpdesk_form' => array(
-      'render element'  => 'form',
-      'path'            => $path,
-      'template'        => 'bibdk-helpdesk-form',
+      'render element' => 'form',
+      'path' => $path,
+      'template' => 'bibdk-helpdesk-form',
     ),
     'theme_bibdk_helpdesk_result' => array(
-      'render element'  => 'form',
-      'path'            => $path,
-      'template'        => 'bibdk-helpdesk-result',
+      'render element' => 'form',
+      'path' => $path,
+      'template' => 'bibdk-helpdesk-result',
+    ),
+    'bibdk_helpdesk_title' => array(
+      'variables' => array(
+        'hest' => NULL,
+      ),
     ),
   );
   return $theme_array;
 }
 
 
+
 /**
- * Process a block search form submission.
+ * title theme function
+ * */
+function theme_bibdk_helpdesk_title() {
+  return l(t('Spørg biblioteksvagten'), 'bibdk_helpdesk', array('attributes' => array('class' => array('bibdk-popup-link'))));
+}
+
+
+
+/**
+ * Implements hook_form().
  */
-function bibdk_helpdesk_submit($form, &$form_state) {
-  if ( $noget == TRUE ) { // send to biblioteksvagten api
-    $form_state['redirect'] = FALSE;
-    $url = 'search/' . $search_info['path']. '/' . trim($q);
-    drupal_goto($url, array('query' => $controls));
-  } else {
-    form_set_error(NULL, t('Currently disabled.'), 'error');
+function bibdk_helpdesk_form() {
+  $form['bibdk_helpdesk'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Ask Library helpdesk'),
+    '#description' => t('Library helpdesk.'),
+    '#tree' => FALSE,
+  );
+  $form['bibdk_helpdesk']['Title'] = array(
+    '#type' => 'hidden',
+    '#value' => 'Nyt spørgsmål modtaget fra bibliotek.dk'
+  );
+  $form['bibdk_helpdesk']['ReceptionMethodId'] = array(
+    '#type' => 'hidden',
+    '#value' => '7'
+  );
+  $form['bibdk_helpdesk']['RedirectSuccess'] = array(
+    '#type' => 'hidden',
+    '#value' => 'http://biblioteksvagten.dk/kvittering.asp'
+  );
+  $form['bibdk_helpdesk']['TimeLimitId'] = array(
+    '#type' => 'select',
+    '#title' => t('Time limit'),
+    '#options' => array(
+      t('No time limit'),
+      "2 " . t('Hours'),
+      "4 " . t('Hours'),
+      "24 " . t('Hours'),
+      "1 " . t('Day'),
+      "1 " . t('Week')
+    ),
+    '#default_value' => '',
+  );
+  $form['bibdk_helpdesk']['QuestionText'] = array(
+    '#type' => 'textarea',
+    '#title' => t('My question is'),
+    '#default_value' => '',
+    '#required' => TRUE
+  );
+  $form['bibdk_helpdesk']['PurposeId'] = array(
+    "#type" => "fieldset",
+    "#after_build" => array("_remove_validation"),
+  );
+  $form['bibdk_helpdesk']['PurposeId'][] = array(
+    '#type' => 'radios',
+    '#title' => t('The information will be used for'),
+    '#options' => array(
+      '1' => t('General interest / hobby'),
+      '6' => t('Business'),
+    ),
+    '#parents' => array('PurposeId'),
+    '#spawned' => TRUE,
+  );
+  $form['bibdk_helpdesk']['PurposeId'][] = array(
+    '#type' => 'radios',
+    '#title' => t('or in connection with assignment for'),
+    '#options' => array(
+      '3' => t('Primary school'),
+      '2' => t('Gymnasium, EUC, VUC, SOSU or other short-cycle higher education'),
+      '4' => t('Medium-cycle higher or higher education'),
+      '5' => t('University education or research'),
+    ),
+    '#spawned' => TRUE,
+    '#parents' => array('PurposeId'),
+  );
+  $form['bibdk_helpdesk']['CustomerName'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Name'),
+    '#default_value' => '',
+    '#required' => TRUE
+  );
+  $form['bibdk_helpdesk']['CustomerPostalCode'] = array(
+    '#type' => 'textfield',
+    '#title' => t('PostalCode'),
+    '#default_value' => '',
+    '#required' => TRUE
+  );
+  $form['bibdk_helpdesk']['CustomerEmail'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Email'),
+    '#default_value' => '',
+    '#required' => TRUE
+  );
+  $form['bibdk_helpdesk']['CustomerPhone'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Phone'),
+    '#default_value' => '',
+    '#required' => TRUE
+  );
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Send'),
+  );
+  $form['#theme'] = 'theme_bibdk_helpdesk_form';
+  return $form;
+}
+
+
+
+/**
+ * Remove required validation from Purpose ID
+ */
+function _remove_validation($element) {
+  _bibdk_helpdesk_disable_validation($element);
+  return $element;
+}
+
+
+
+/*
+ * Recursive function.
+ * Removes required validation flag for specified form element and all its children.
+ */
+function _bibdk_helpdesk_disable_validation(&$element) {
+  unset($element['#needs_validation']);
+  foreach (element_children($element) as $key) {
+    _bibdk_helpdesk_disable_validation($element[$key]);
   }
 }
 
 
+
 /**
- * Callback function for the /helpdesk menu item.
- * @param String $json
- * @return array
+ * Validate helpdesk form submission.
  */
-function bibdk_helpdesk_execute() {
-  $result = array();
-  $markup = theme('theme_bibdk_helpdesk_result', array('result' => $result));
-  return $markup;
+function bibdk_helpdesk_form_validate($form, &$form_state) {
+  if (!valid_email_address($form_state['values']['CustomerEmail'])) {
+    form_set_error("CustomerEmail", t("Email needs to be a valid email"));
+  }
+  if (!isset($form_state['values']['PurposeId'])) {
+    form_set_error("PurposeId", t("Please state a purpose"));
+  }
 }
 
 
 
-function bibdk_helpdesk_teaser_form() {
-  $form['#attached'] = array(
-    'css' => array(
-      drupal_get_path('module', 'bibdk_helpdesk') . '/css/bibdk_helpdesk.css',
-    ),
-    // 'js' => array(
-    //   drupal_get_path('module', 'bibdk_helpdesk') . '/js/bibdk_helpdesk.js',
-    // )
-  );
-  $form['bibdk_helpdesk'] = array(
-    '#type'         => 'fieldset',
-    '#title'        => t('Library helpdesk'),
-    '#description'  => t('You can contact a librarian, if you need a personalized service.'),
-    '#tree'         => TRUE,
-  );
-  $form['actions'] = array('#type' => 'actions');
-  $form['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Ask the helpdesk'),
-  );
-  $form['#submit'][] = '_bibdk_helpdesk_teaser_form_submit';
-  $form['#theme']    = 'theme_bibdk_helpdesk_teaser_form';
-  return $form;
+/**
+ * Process helpdesk form submission.
+ */
+function bibdk_helpdesk_form_submit($form, &$form_state) {
+  $curl = new microcurl();
+  try {
+    $curl->set_url("http://biblioteksvagten.dk/adm/QuestionFormHandler.axd");
+    $curl->set_post($form_state['values']);
+    $result = $curl->get();
+  } catch (Exception $e) {
+    drupal_set_message("An error happened : $e");
+    return;
+  }
+
+  if ($curl->has_error()) {
+    drupal_set_message("Sorry we could not submit your query, please try again later", "error");
+    watchdog("submit", "ERROR: cannot submit to helpdesk", $curl->has_error(), WATCHDOG_ERROR);
+    return;
+  }
+
+  $status = $curl->get_status();
+  if ($status['http_code'] == 302) {
+    drupal_goto("http://biblioteksvagten.dk/kvittering.asp");
+  }
+  else {
+    drupal_set_message("Sorry we could not submit your query, please try again later", "error");
+    watchdog("submit", "ERROR: cannot submit to helpdesk", $status, WATCHDOG_ERROR);
+  }
 }
-
-
-function _bibdk_helpdesk_teaser_form_submit() {
-    $form_state['redirect'] = FALSE;
-    $url = 'helpdesk';
-    drupal_goto($url, array());
-}
-
-
-function bibdk_helpdesk_form() {
-  $form['bibdk_helpdesk'] = array(
-    '#type'         => 'fieldset',
-    '#title'        => t('Search page values'),
-    '#description'  => t('Library helpdesk.'),
-    '#tree'         => TRUE,
-  );
-  $form['bibdk_helpdesk']['value_title'] = array(
-    '#type'           => 'textfield',
-    '#title'          => t('Name'),
-    '#title_display'  => 'invisible',
-    '#default_value'  => '',
-  );
-  $form['actions'] = array('#type' => 'actions');
-  $form['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Ask the helpdesk'),
-  );
-  $form['#submit'][] = '_bibdk_helpdesk_form_submit';
-  $form['#theme']    = 'theme_bibdk_helpdesk_form';
-  return $form;
-}
-
