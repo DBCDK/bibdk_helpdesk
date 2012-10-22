@@ -174,7 +174,7 @@ function bibdk_helpdesk_theme() {
  * title theme function
  * */
 function theme_bibdk_helpdesk_title() {
-  return l(t('Spørg biblioteksvagten'), 'bibdk_helpdesk', array('attributes' => array('class' => array('bibdk-popup-link'))));
+  return l(t('Ask_a_librarian'), 'bibdk_helpdesk', array('attributes' => array('class' => array('bibdk-popup-link'))));
 }
 
 
