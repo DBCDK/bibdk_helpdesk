@@ -94,7 +94,7 @@ function _bibdk_helpdesk_create_render_array($delta) {
           '#title' => t("Ask Helpdesk"),
           '#href' => 'overlay/helpdesk',
           '#attributes' => array(
-            'class' => array('bibdk-popup-link'),
+            'class' => array('bibdk-popup-link', 'element-target'),
             'rel' => array('userhelp'),
           ),
         ),
