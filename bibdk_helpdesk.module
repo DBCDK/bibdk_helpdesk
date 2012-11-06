@@ -52,7 +52,7 @@ function bibdk_helpdesk_block_view($delta = '') {
       $block['content'] =
          theme('bibdk_helpdesk_block', array(
           'description' => t('You can contact a librarian, if you need a personalized service.'),
-          'link' => l(t("Ask Helpdesk"), "overlay/helpdesk", array('attributes' => array('class' => array('bibdk-popup-link', 'text-white'), "rel" => array('userhelp')))),
+          'link' => l(t('Ask Helpdesk'), 'overlay/helpdesk', array('attributes' => array('class' => array('bibdk-popup-link', 'text-white'), 'rel' => array('userhelp')))),
           'image' => _bibdk_get_random_helpdesk_image('normal'),
           'title' => theme('bibdk_helpdesk_title'),
         )
@@ -60,7 +60,7 @@ function bibdk_helpdesk_block_view($delta = '') {
       break;
 
     case 'header_action':
-      $block['subject'] = "<none>";
+      $block['subject'] = '<none>';
       $block['content'] = _bibdk_helpdesk_create_render_array($delta);
       break;
   }
@@ -81,7 +81,7 @@ function _bibdk_helpdesk_create_render_array($delta) {
       $render = array(
         'link' => array(
           '#type' => 'link',
-          '#title' => t("Ask Helpdesk"),
+          '#title' => t('Ask Helpdesk'),
           '#href' => 'overlay/helpdesk',
           '#attributes' => array(
             'class' => array('bibdk-popup-link', 'element-target'),
