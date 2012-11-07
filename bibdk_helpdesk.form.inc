@@ -6,33 +6,25 @@
 function bibdk_helpdesk_form() {
 
   // Fields related to the question
-  // Always wrap form sections in a #type container with class .form-section
-  $form['form_section_question'] = array(
-    '#type' => 'container',
-    '#attributes' => array(
-      'class' => array('form-section'),
-    ),
-  );
-  $form['form_section_question']['question'] = array(
+  $form['question'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Your question'),
     '#tree' => FALSE,
     '#attributes' => array(
     ),
   );
-  $form['form_section_question']['question']['Title'] = array(
+  $form['question']['Title'] = array(
     '#type' => 'hidden',
     '#value' => 'Nyt spørgsmål modtaget fra bibliotek.dk'
   );
-  $form['form_section_question']['question']['ReceptionMethodId'] = array(
+  $form['question']['ReceptionMethodId'] = array(
     '#type' => 'hidden',
     '#value' => '7'
   );
-  $form['form_section_question']['question']['RedirectSuccess'] = array(
+  $form['question']['RedirectSuccess'] = array(
     '#type' => 'hidden',
     '#value' => 'http://biblioteksvagten.dk/kvittering.asp'
   );
-  $form['form_section_question']['question']['TimeLimitId'] = array(
+  $form['question']['TimeLimitId'] = array(
     '#type' => 'select',
     '#title' => t('Time limit'),
     '#description' => t('Select the time limit of your question'),
@@ -46,20 +38,20 @@ function bibdk_helpdesk_form() {
     ),
     '#default_value' => '',
   );
-  $form['form_section_question']['question']['QuestionText'] = array(
+  $form['question']['QuestionText'] = array(
     '#type' => 'textarea',
     '#title' => t('My question is'),
     '#default_value' => '',
     '#required' => TRUE
   );
-  $form['form_section_question']['question']['PurposeId'] = array(
+  $form['question']['PurposeId'] = array(
     "#type" => "fieldset",
     "#after_build" => array("_remove_validation"),
     "#attributes" => array(
       'class' => array('fieldset-notitle'),
     ),
   );
-  $form['form_section_question']['question']['PurposeId'][] = array(
+  $form['question']['PurposeId'][] = array(
     '#type' => 'radios',
     '#title' => t('The information will be used for'),
     '#options' => array(
@@ -69,7 +61,7 @@ function bibdk_helpdesk_form() {
     '#parents' => array('PurposeId'),
     '#spawned' => TRUE,
   );
-  $form['form_section_question']['question']['PurposeId'][] = array(
+  $form['question']['PurposeId'][] = array(
     '#type' => 'radios',
     '#title' => t('or in connection with assignment for'),
     '#options' => array(
@@ -83,32 +75,32 @@ function bibdk_helpdesk_form() {
   );
 
   // Fields related to the customer
-  // Always wrap form sections in a #type container with class .form-section
-  $form['form_section_customer'] = array(
-    '#type' => 'container',
+
+  $form['customer'] = array(
+    '#type' => 'fieldset',
+    '#tree' => FALSE,
     '#attributes' => array(
-      'class' => array('form-section'),
     ),
   );
-  $form['form_section_customer']['customer']['CustomerName'] = array(
+  $form['customer']['CustomerName'] = array(
     '#type' => 'textfield',
     '#title' => t('Name'),
     '#default_value' => '',
     '#required' => TRUE
   );
-  $form['form_section_customer']['customer']['CustomerPostalCode'] = array(
+  $form['customer']['CustomerPostalCode'] = array(
     '#type' => 'textfield',
     '#title' => t('PostalCode'),
     '#default_value' => '',
     '#required' => TRUE
   );
-  $form['form_section_customer']['customer']['CustomerEmail'] = array(
+  $form['customer']['CustomerEmail'] = array(
     '#type' => 'textfield',
     '#title' => t('Email'),
     '#default_value' => '',
     '#required' => TRUE
   );
-  $form['form_section_customer']['customer']['CustomerPhone'] = array(
+  $form['customer']['CustomerPhone'] = array(
     '#type' => 'textfield',
     '#title' => t('Phone'),
     '#default_value' => '',
@@ -116,13 +108,8 @@ function bibdk_helpdesk_form() {
   );
 
   // Submit
-  $form['form_section_actions'] = array(
-    '#type' => 'container',
-    '#attributes' => array(
-      'class' => array('form-section'),
-    ),
-  );
-  $form['form_section_actions']['actions']['submit'] = array(
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Send'),
   );
