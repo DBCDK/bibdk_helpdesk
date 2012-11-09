@@ -79,8 +79,6 @@ function bibdk_helpdesk_form() {
   $form['customer'] = array(
     '#type' => 'fieldset',
     '#tree' => FALSE,
-    '#attributes' => array(
-    ),
   );
   $form['customer']['CustomerName'] = array(
     '#type' => 'textfield',

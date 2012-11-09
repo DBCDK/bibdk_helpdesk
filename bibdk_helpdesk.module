@@ -46,15 +46,19 @@ function bibdk_helpdesk_block_view($delta = '') {
   $block = array();
 
   switch ($delta) {
-
     case 'bibdk-helpdesk-teaser':
       $block['subject'] = t('Library Helpdesk');
       $block['content'] =
          theme('bibdk_helpdesk_block', array(
           'description' => t('You can contact a librarian, if you need a personalized service.'),
-          'link' => l(t('Ask Helpdesk'), 'overlay/helpdesk', array('attributes' => array('class' => array('bibdk-popup-link', 'text-white'), 'rel' => array('userhelp')))),
+          'link' => l(t('Ask Helpdesk'), 'overlay/helpdesk', array(
+            'attributes' => array(
+              'class' => array('bibdk-popup-link', 'text-white'),
+              'rel' => array('userhelp'),
+            )
+          )),
           'image' => _bibdk_get_random_helpdesk_image('normal'),
-          'title' => theme('bibdk_helpdesk_title'),
+          'title' => t('Ask helpdesk'),
         )
       );
       break;
@@ -120,10 +124,8 @@ function bibdk_helpdesk_theme() {
   $theme_array = array(
 
     'bibdk_helpdesk_block' => array(
-      'render element' => 'elements',
       'path' => $path,
       'template' => 'bibdk-helpdesk-block',
-      'variables' => array('image_css', 'form'),
     ),
     'theme_bibdk_helpdesk_result' => array(
       'render element' => 'form',
