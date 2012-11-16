@@ -1,9 +1,9 @@
 <?php
+
 /**
  * @file
  * Create an interface for the library helpdesk
  */
-
 
 /**
  * Implements hook_menu();
@@ -19,7 +19,6 @@ function bibdk_helpdesk_menu() {
   );
   return $items;
 }
-
 
 /**
  * Implements hook_block_info().
@@ -37,29 +36,30 @@ function bibdk_helpdesk_block_info() {
   return $blocks;
 }
 
-
 /**
  * Implements hook_block_view().
  */
 function bibdk_helpdesk_block_view($delta = '') {
 
   $block = array();
-
   switch ($delta) {
     case 'bibdk-helpdesk-teaser':
       $block['subject'] = t('Library Helpdesk');
       $block['content'] =
-         theme('bibdk_helpdesk_block', array(
-          'description' => t('You can contact a librarian, if you need a personalized service.'),
-          'link' => l(t('Ask Helpdesk'), 'overlay/helpdesk', array(
-            'attributes' => array(
-              'class' => array('bibdk-popup-link', 'text-white'),
-              'rel' => array('userhelp'),
-            )
-          )),
-          'image' => _bibdk_get_random_helpdesk_image('normal'),
-          'title' => t('Ask helpdesk'),
-        )
+          theme('bibdk_helpdesk_block', array(
+        'description' => t('You can contact a librarian, if you need a personalized service.'),
+        'link' => l(t('Ask Helpdesk'), 'overlay/helpdesk', array(
+          'attributes' => array(
+            'class' => array('bibdk-popup-link', 'text-white'),
+            'rel' => array('userhelp'),
+          )
+        )),
+        'image' => theme_image(array(
+          'path' => _bibdk_get_random_helpdesk_image('normal'),
+          'attributes' => array(),
+        )),
+        'title' => t('Ask helpdesk'),
+          )
       );
       break;
 
@@ -70,7 +70,6 @@ function bibdk_helpdesk_block_view($delta = '') {
   }
   return $block;
 }
-
 
 /**
  * Helper function: Creates render arrays for blocks
@@ -102,7 +101,6 @@ function _bibdk_helpdesk_create_render_array($delta) {
   return $render;
 }
 
-
 /**
  * Helper function: Returns random image path
  * params: $size is the subfolder within /images/
@@ -115,14 +113,12 @@ function _bibdk_get_random_helpdesk_image($size) {
   return $images_path . '/' . $image;
 }
 
-
 /**
  * Implements hook_theme().
  */
 function bibdk_helpdesk_theme() {
   $path = drupal_get_path('module', 'bibdk_helpdesk') . '/theme';
   $theme_array = array(
-
     'bibdk_helpdesk_block' => array(
       'path' => $path,
       'template' => 'bibdk-helpdesk-block',
