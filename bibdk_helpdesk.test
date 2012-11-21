@@ -10,8 +10,8 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
    */
   public static function getInfo() {
     return array(
-      'name' => t('Form submission'),
-      'description' => t('Test if the form is validated and submitted correct'),
+      'name' => t('Form presence and validation'),
+      'description' => t('Test if the form is present'),
       'group' => t('Helpdesk'),
     );
   }
@@ -25,7 +25,8 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
 
   // Test validation error if user makes no input
   public function testNoUserInput() {
-    $this->drupalPost('helpdesk', NULL, t('Send'));
+    $this->drupalGet('overlay/helpdesk');
+    $this->drupalPost(NULL, NULL, t('Send'));
     $this->assertText('Name field is required');
     $this->assertText('PostalCode field is required');
     $this->assertText('Phone field is required');
@@ -36,23 +37,9 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
   // Test validation error if email has wrong format
   public function testIncorrectEmail() {
     $fields['CustomerEmail'] = $this->randomName(8);
-    $this->drupalPost('helpdesk', $fields, t('Send'));
+    $this->drupalPost(NULL, $fields, t('Send'));
     $this->assertText('Email needs to be a valid email');
   }
-
-  // Test if form is submitted correctly
-  public function testSubmission() {
-
-    $fields['CustomerEmail'] = "test@dbc.dk";
-    $fields['QuestionText'] = "THIS IS A TEST: " . $this->randomString(20);
-    $fields['CustomerName'] = $this->randomName(8);
-    $fields['CustomerPostalCode'] = rand(1000, 9999);
-    $fields['CustomerPhone'] = rand(111111, 999999999);
-    $fields['PurposeId'] = rand(1, 6);
-    $this->drupalPost('helpdesk', $fields, t('Send'));
-    $this->assertText('Biblioteksvagten har modtaget dit spørgsmål');
-  }
-
 }
 
 /**
