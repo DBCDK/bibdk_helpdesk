@@ -158,11 +158,16 @@ function bibdk_helpdesk_form_validate($form, &$form_state) {
  * Process helpdesk form submission.
  */
 function bibdk_helpdesk_form_submit($form, &$form_state) {
-  $curl = new microcurl();
+  $curl = new MicroCURL();
+
+  $header = array("Content-Type: text/xml; charset=utf-8", "Accept-Charset: utf-8");
+
   try {
-    $curl->set_url("http://biblioteksvagten.dk/adm/QuestionFormHandler.axd");
+    $url = variable_get('helpdesk_submit_url', '');
+    $curl->set_url($url);
+    $curl->set_option(CURLOPT_HTTPHEADER, $header);
     $curl->set_post($form_state['values']);
-    $result = $curl->get();
+    $curl->get();
   } catch (Exception $e) {
     drupal_set_message("An error happened : $e");
     return;
