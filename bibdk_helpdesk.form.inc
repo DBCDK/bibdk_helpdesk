@@ -9,8 +9,7 @@ function bibdk_helpdesk_form() {
   $form['question'] = array(
     '#type' => 'fieldset',
     '#tree' => FALSE,
-    '#attributes' => array(
-    ),
+    '#attributes' => array(),
   );
   $form['question']['Title'] = array(
     '#type' => 'hidden',
@@ -116,7 +115,6 @@ function bibdk_helpdesk_form() {
 }
 
 
-
 /**
  * Remove required validation from Purpose ID
  */
@@ -124,7 +122,6 @@ function _remove_validation($element) {
   _bibdk_helpdesk_disable_validation($element);
   return $element;
 }
-
 
 
 /*
@@ -139,7 +136,6 @@ function _bibdk_helpdesk_disable_validation(&$element) {
 }
 
 
-
 /**
  * Validate helpdesk form submission.
  */
@@ -151,7 +147,6 @@ function bibdk_helpdesk_form_validate($form, &$form_state) {
     form_set_error("PurposeId", t("Please state a purpose"));
   }
 }
-
 
 
 /**
@@ -168,7 +163,8 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
     $curl->set_option(CURLOPT_HTTPHEADER, $header);
     $curl->set_post($form_state['values']);
     $curl->get();
-  } catch (Exception $e) {
+  }
+  catch (Exception $e) {
     drupal_set_message("An error happened : $e");
     return;
   }
