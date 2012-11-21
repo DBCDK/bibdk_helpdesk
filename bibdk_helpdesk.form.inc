@@ -17,7 +17,7 @@ function bibdk_helpdesk_form() {
   );
   $form['question']['ReceptionMethodId'] = array(
     '#type' => 'hidden',
-    '#value' => '7'
+    '#value' => '6'
   );
   $form['question']['RedirectSuccess'] = array(
     '#type' => 'hidden',
