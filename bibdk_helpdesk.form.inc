@@ -9,8 +9,7 @@ function bibdk_helpdesk_form() {
   $form['question'] = array(
     '#type' => 'fieldset',
     '#tree' => FALSE,
-    '#attributes' => array(
-    ),
+    '#attributes' => array(),
   );
   $form['question']['Title'] = array(
     '#type' => 'hidden',
@@ -18,7 +17,7 @@ function bibdk_helpdesk_form() {
   );
   $form['question']['ReceptionMethodId'] = array(
     '#type' => 'hidden',
-    '#value' => '7'
+    '#value' => '6'
   );
   $form['question']['RedirectSuccess'] = array(
     '#type' => 'hidden',
@@ -116,7 +115,6 @@ function bibdk_helpdesk_form() {
 }
 
 
-
 /**
  * Remove required validation from Purpose ID
  */
@@ -124,7 +122,6 @@ function _remove_validation($element) {
   _bibdk_helpdesk_disable_validation($element);
   return $element;
 }
-
 
 
 /*
@@ -137,7 +134,6 @@ function _bibdk_helpdesk_disable_validation(&$element) {
     _bibdk_helpdesk_disable_validation($element[$key]);
   }
 }
-
 
 
 /**
@@ -153,24 +149,29 @@ function bibdk_helpdesk_form_validate($form, &$form_state) {
 }
 
 
-
 /**
  * Process helpdesk form submission.
  */
 function bibdk_helpdesk_form_submit($form, &$form_state) {
-  $curl = new microcurl();
+  $curl = new MicroCURL();
+
+  $header = array("Content-Type: text/xml; charset=utf-8", "Accept-Charset: utf-8");
+
   try {
-    $curl->set_url("http://biblioteksvagten.dk/adm/QuestionFormHandler.axd");
+    $url = variable_get('helpdesk_submit_url', '');
+    $curl->set_url($url);
+    $curl->set_option(CURLOPT_HTTPHEADER, $header);
     $curl->set_post($form_state['values']);
-    $result = $curl->get();
-  } catch (Exception $e) {
-    drupal_set_message("An error happened : $e");
+    $curl->get();
+  }
+  catch (Exception $e) {
+    drupal_set_message(t('An error happened : @error', array('@error' => $e), array('context' => 'bibdk_helpdesk')), 'error');
     return;
   }
 
   if ($curl->has_error()) {
-    drupal_set_message("Sorry we could not submit your query, please try again later", "error");
-    watchdog("submit", "ERROR: cannot submit to helpdesk", $curl->has_error(), WATCHDOG_ERROR);
+    drupal_set_message(t('Sorry we could not submit your query, please try again later', array(), array('context' => 'bibdk_helpdesk')), 'error');
+    watchdog('submit', 'ERROR: cannot submit to helpdesk', $curl->has_error(), WATCHDOG_ERROR);
     return;
   }
 
@@ -179,7 +180,7 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
     drupal_goto("http://biblioteksvagten.dk/kvittering.asp");
   }
   else {
-    drupal_set_message("Sorry we could not submit your query, please try again later", "error");
-    watchdog("submit", "ERROR: cannot submit to helpdesk", $status, WATCHDOG_ERROR);
+    drupal_set_message(t('Sorry we could not submit your query, please try again later', array(), array('context' => 'bibdk_helpdesk')), 'error');
+    watchdog('submit', 'ERROR: cannot submit to helpdesk', $status, WATCHDOG_ERROR);
   }
 }

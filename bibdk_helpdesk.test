@@ -1,30 +1,32 @@
 <?php
 /**
-* Test validation of fields and form submission
-*/
+ * Test validation of fields and form submission
+ */
 class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
- 
+
 //protected $profile = 'bibdk';
-/**
+  /**
    * Implements getInfo().
    */
   public static function getInfo() {
-    return array (
-      'name' => t('Form submission'),
-      'description' => t('Test if the form is validated and submitted correct'),
+    return array(
+      'name' => t('Form presence and validation'),
+      'description' => t('Test if the form is present'),
       'group' => t('Helpdesk'),
     );
   }
+
   public function setUp() {
     // Enable any module that you will need in your tests.
     parent::setUp('bibdk_helpdesk', 'microcurl');
     //$account = $this->drupalCreateUser(array('access content'));
     //$this->drupalLogin($account);
   }
-  
+
   // Test validation error if user makes no input
-  public function testNoUserInput(){
-    $this->drupalPost('helpdesk', NULL, t('Send'));
+  public function testNoUserInput() {
+    $this->drupalGet('overlay/helpdesk');
+    $this->drupalPost(NULL, NULL, t('Send'));
     $this->assertText('Name field is required');
     $this->assertText('PostalCode field is required');
     $this->assertText('Phone field is required');
@@ -33,24 +35,11 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
   }
 
   // Test validation error if email has wrong format
-  public function testIncorrectEmail(){
+  public function testIncorrectEmail() {
     $fields['CustomerEmail'] = $this->randomName(8);
-    $this->drupalPost('helpdesk', $fields, t('Send'));
+    $this->drupalPost(NULL, $fields, t('Send'));
     $this->assertText('Email needs to be a valid email');
   }
-  // Test if form is submitted correctly
-  public function testSubmission(){
-    
-    $fields['CustomerEmail'] = "test@dbc.dk";
-    $fields['QuestionText'] = "THIS IS A TEST: ".$this->randomString(20);
-    $fields['CustomerName'] = $this->randomName(8);
-    $fields['CustomerPostalCode'] = rand(1000, 9999);
-    $fields['CustomerPhone'] = rand(111111, 999999999);
-    $fields['PurposeId'] = rand(1,6);
-    $this->drupalPost('helpdesk', $fields, t('Send'));
-    $this->assertText('Biblioteksvagten har modtaget dit spørgsmål');
-  }
-  
 }
 
 /**
@@ -68,28 +57,29 @@ class BibdkHelpdeskTeaserblockTestcase extends DrupalWebTestCase {
 
   public function setUp() {
     parent::setUp('bibdk_helpdesk', 'microcurl');
-    
+
     $admin = $this->drupalCreateUser(array('administer blocks'));
     $this->drupalLogin($admin);
-    
+
     $this->drupalPost('admin/structure/block', array('blocks[bibdk_helpdesk_bibdk-helpdesk-teaser][region]' => 'content'), t('Save blocks'));
     $this->drupalLogout();
   }
-  
+
   /**
-   * Ensuring that the block is visible 
+   * Ensuring that the block is visible
    */
-  public function testBlockPresence(){
+  public function testBlockPresence() {
     $this->drupalGet('');
     $this->assertText('Library Helpdesk', t('Block is present at frontpage'));
   }
-  
+
   /**
-   * Test if link in block redirects to helpdesk 
+   * Test if link in block redirects to helpdesk
    */
-  public function testTeaserLink(){
+  public function testTeaserLink() {
     $this->clickLink(t('Ask the helpdesk'));
     $this->assertText('Ask Library helpdesk', t('Teaserblock redirects to /helpdesk'));
   }
 }
+
 ?>

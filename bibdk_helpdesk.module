@@ -37,6 +37,48 @@ function bibdk_helpdesk_block_info() {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter (ting_admin_ting_settings)
+ * Creates a field for adding a URL for the Helpdesk webservice in the install flow
+ */
+function bibdk_helpdesk_form_ting_admin_ting_settings_alter(&$form, &$form_state, $form_id) {
+  $form['helpdesk'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Helpdesk settings'),
+    '#description' => t('Settings for bibdk helpdesk'),
+    '#weight' => -3,
+  );
+
+  $form['helpdesk']['url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Helpdesk URL'),
+    '#description' => t('URL to where the helpdesk form should be submitted e.g. http://biblioteksvagten.dk/openquestion.asp'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('helpdesk_submit_url', ''),
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter (ting_client_admin_webservices_settings)
+ * Creates a field for adding a URL for the Helpdesk webservice
+ */
+function bibdk_helpdesk_form_ting_client_admin_webservices_settings_alter(&$form, &$form_state, $form_id) {
+  $form['helpdesk'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Helpdesk settings'),
+    '#description' => t('Settings for bibdk helpdesk'),
+    '#weight' => -3,
+  );
+
+  $form['helpdesk']['helpdesk_submit_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Helpdesk URL'),
+    '#description' => t('URL to where the helpdesk form should be submitted e.g. http://biblioteksvagten.dk/openquestion.asp'),
+    '#required' => FALSE,
+    '#default_value' => variable_get('helpdesk_submit_url', ''),
+  );
+}
+
+/**
  * Implements hook_block_view().
  */
 function bibdk_helpdesk_block_view($delta = '') {
@@ -46,21 +88,21 @@ function bibdk_helpdesk_block_view($delta = '') {
     case 'bibdk-helpdesk-teaser':
       $block['subject'] = t('Library Helpdesk');
       $block['content'] =
-          theme('bibdk_helpdesk_block', array(
-        'description' => t('You can contact a librarian, if you need a personalized service.'),
-        'link' => l(t('Ask Helpdesk'), 'overlay/helpdesk', array(
-          'attributes' => array(
-            'class' => array('bibdk-popup-link', 'text-white'),
-            'rel' => array('userhelp'),
+        theme('bibdk_helpdesk_block', array(
+            'description' => t('You can contact a librarian, if you need a personalized service.'),
+            'link' => l(t('Ask Helpdesk'), 'overlay/helpdesk', array(
+              'attributes' => array(
+                'class' => array('bibdk-popup-link', 'text-white'),
+                'rel' => array('userhelp'),
+              )
+            )),
+            'image' => theme_image(array(
+              'path' => _bibdk_get_random_helpdesk_image('normal'),
+              'attributes' => array(),
+            )),
+            'title' => t('Ask helpdesk'),
           )
-        )),
-        'image' => theme_image(array(
-          'path' => _bibdk_get_random_helpdesk_image('normal'),
-          'attributes' => array(),
-        )),
-        'title' => t('Ask helpdesk'),
-          )
-      );
+        );
       break;
 
     case 'header_action':
@@ -73,6 +115,8 @@ function bibdk_helpdesk_block_view($delta = '') {
 
 /**
  * Helper function: Creates render arrays for blocks
+ *
+ * @param delta
  * @return array
  */
 function _bibdk_helpdesk_create_render_array($delta) {
