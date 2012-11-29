@@ -141,10 +141,10 @@ function _bibdk_helpdesk_disable_validation(&$element) {
  */
 function bibdk_helpdesk_form_validate($form, &$form_state) {
   if (!valid_email_address($form_state['values']['CustomerEmail'])) {
-    form_set_error("CustomerEmail", t("Email needs to be a valid email"));
+    form_set_error("CustomerEmail", t('Email needs to be a valid email', array(), array('context' => 'bibdk_helpdesk:error')));
   }
   if (!isset($form_state['values']['PurposeId'])) {
-    form_set_error("PurposeId", t("Please state a purpose"));
+    form_set_error("PurposeId", t('Please state a purpose', array(), array('context' => 'bibdk_helpdesk:error')));
   }
 }
 
