@@ -171,7 +171,7 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
 
   if ($curl->has_error()) {
     drupal_set_message(t('Sorry we could not submit your query, please try again later', array(), array('context' => 'bibdk_helpdesk')), 'error');
-    watchdog('submit', 'ERROR: cannot submit to helpdesk', $curl->has_error(), WATCHDOG_ERROR);
+    watchdog('submit', 'ERROR: cannot submit to helpdesk: @error', array('@error' => $curl->has_error()), WATCHDOG_ERROR);
     return;
   }
 
@@ -181,6 +181,6 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
   }
   else {
     drupal_set_message(t('Sorry we could not submit your query, please try again later', array(), array('context' => 'bibdk_helpdesk')), 'error');
-    watchdog('submit', 'ERROR: cannot submit to helpdesk', $status, WATCHDOG_ERROR);
+    watchdog('submit', 'ERROR: cannot submit to helpdesk: @error', array('@error' => $status), WATCHDOG_ERROR);
   }
 }
