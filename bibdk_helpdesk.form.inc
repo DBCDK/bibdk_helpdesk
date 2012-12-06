@@ -141,10 +141,10 @@ function _bibdk_helpdesk_disable_validation(&$element) {
  */
 function bibdk_helpdesk_form_validate($form, &$form_state) {
   if (!valid_email_address($form_state['values']['CustomerEmail'])) {
-    form_set_error("CustomerEmail", t("Email needs to be a valid email"));
+    form_set_error("CustomerEmail", t('Email needs to be a valid email', array(), array('context' => 'bibdk_helpdesk:error')));
   }
   if (!isset($form_state['values']['PurposeId'])) {
-    form_set_error("PurposeId", t("Please state a purpose"));
+    form_set_error("PurposeId", t('Please state a purpose', array(), array('context' => 'bibdk_helpdesk:error')));
   }
 }
 
@@ -171,7 +171,7 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
 
   if ($curl->has_error()) {
     drupal_set_message(t('Sorry we could not submit your query, please try again later', array(), array('context' => 'bibdk_helpdesk')), 'error');
-    watchdog('submit', 'ERROR: cannot submit to helpdesk', $curl->has_error(), WATCHDOG_ERROR);
+    watchdog('submit', 'ERROR: cannot submit to helpdesk: @error', array('@error' => $curl->has_error()), WATCHDOG_ERROR);
     return;
   }
 
@@ -181,6 +181,6 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
   }
   else {
     drupal_set_message(t('Sorry we could not submit your query, please try again later', array(), array('context' => 'bibdk_helpdesk')), 'error');
-    watchdog('submit', 'ERROR: cannot submit to helpdesk', $status, WATCHDOG_ERROR);
+    watchdog('submit', 'ERROR: cannot submit to helpdesk: @error', array('@error' => $status), WATCHDOG_ERROR);
   }
 }
