@@ -12,7 +12,7 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
     return array(
       'name' => t('Form presence and validation'),
       'description' => t('Test if the form is present'),
-      'group' => t('Helpdesk'),
+      'group' => t('Bibliotek.dk - Helpdesk'),
     );
   }
 
@@ -51,34 +51,27 @@ class BibdkHelpdeskTeaserblockTestcase extends DrupalWebTestCase {
     return array(
       'name' => 'Teaser block',
       'description' => t('Test that teaser block is actived, and link is active'),
-      'group' => t('Helpdesk'),
+      'group' => t('Bibliotek.dk - Helpdesk'),
     );
   }
 
   public function setUp() {
     parent::setUp('bibdk_helpdesk', 'microcurl');
 
-    $admin = $this->drupalCreateUser(array('administer blocks'));
-    $this->drupalLogin($admin);
-
-    $this->drupalPost('admin/structure/block', array('blocks[bibdk_helpdesk_bibdk-helpdesk-teaser][region]' => 'content'), t('Save blocks'));
-    $this->drupalLogout();
   }
 
   /**
-   * Ensuring that the block is visible
-   */
-  public function testBlockPresence() {
-    $this->drupalGet('');
-    $this->assertText('Library Helpdesk', t('Block is present at frontpage'));
-  }
-
-  /**
-   * Test if link in block redirects to helpdesk
+   * Ensuring that the block is visible, and test if link in block redirects to helpdesk
    */
   public function testTeaserLink() {
-    $this->clickLink(t('Ask the helpdesk'));
-    $this->assertText('Ask Library helpdesk', t('Teaserblock redirects to /helpdesk'));
+    $admin = $this->drupalCreateUser(array('administer blocks'));
+    $this->drupalLogin($admin);
+    $this->drupalPost('admin/structure/block', array('blocks[bibdk_helpdesk_header_action][region]' => 'content'), t('Save blocks'));
+    $this->drupalLogout();
+    $this->drupalGet('');
+    $this->assertText('Ask Helpdesk', t('Block is present at frontpage'));
+    $this->clickLink(t('Ask Helpdesk'));
+    $this->assertText('Help desk', t('Teaserblock redirects to "overlay/helpdesk"'));
   }
 }
 
