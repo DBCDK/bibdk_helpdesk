@@ -1,7 +1,7 @@
 name = Bibliotek.dk helpdesk form
 description = Provide a form for the library helpdesk, and a teaser block.
 core = 7.x
-version = 7.x-0.5
+version = 7.x-0.6
 package = Bibliotek.dk
 
 dependencies[] = microcurl
