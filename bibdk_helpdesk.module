@@ -5,6 +5,7 @@
  * Create an interface for the library helpdesk
  */
 
+
 /**
  * Implements hook_menu();
  */
@@ -17,8 +18,19 @@ function bibdk_helpdesk_menu() {
     'access arguments' => array('access content'),
     'file' => 'bibdk_helpdesk.form.inc',
   );
+
+  $items['admin/config/user-interface/bibdk_helpdesk'] = array(
+    'title' => 'Bibliotek.dk helpdesk',
+    'description' => 'Customize the helpdesk settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bibdk_helpdesk_admin'),
+    'access arguments' => array('administer bibdk helpdesk settings'),
+    'file' => 'bibdk_helpdesk.admin.inc',
+  );
+
   return $items;
 }
+
 
 /**
  * Implements hook_block_info().
@@ -36,52 +48,35 @@ function bibdk_helpdesk_block_info() {
   return $blocks;
 }
 
-/**
- * Implements hook_form_FORM_ID_alter (ting_admin_ting_settings)
- * Creates a field for adding a URL for the Helpdesk webservice in the install flow
- */
-function bibdk_helpdesk_form_ting_admin_ting_settings_alter(&$form, &$form_state, $form_id) {
-  $form['helpdesk'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Helpdesk settings'),
-    '#description' => t('Settings for bibdk helpdesk'),
-    '#weight' => -3,
-  );
-
-  $form['helpdesk']['url'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Helpdesk URL'),
-    '#description' => t('URL to where the helpdesk form should be submitted e.g. http://biblioteksvagten.dk/openquestion.asp'),
-    '#required' => FALSE,
-    '#default_value' => variable_get('helpdesk_submit_url', ''),
-  );
-}
 
 /**
- * Implements hook_form_FORM_ID_alter (ting_client_admin_webservices_settings)
- * Creates a field for adding a URL for the Helpdesk webservice
+ * Implements hook_install().
  */
-function bibdk_helpdesk_form_ting_client_admin_webservices_settings_alter(&$form, &$form_state, $form_id) {
-  $form['helpdesk'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Helpdesk settings'),
-    '#description' => t('Settings for bibdk helpdesk'),
-    '#weight' => -3,
+function bibdk_helpdesk_install() {
+
+  $default_values = array(
+    'description' => t('You can contact a librarian, if you need a personalized service.'),
+    'title' => t('Ask helpdesk'),
+    'link' => t('Ask helpdesk'),
+    'image' => array(
+      'normal' => array(
+        'height' => 190,
+        'width' => 190,
+      ),
+    ),
   );
 
-  $form['helpdesk']['helpdesk_submit_url'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Helpdesk URL'),
-    '#description' => t('URL to where the helpdesk form should be submitted e.g. http://biblioteksvagten.dk/openquestion.asp'),
-    '#required' => FALSE,
-    '#default_value' => variable_get('helpdesk_submit_url', ''),
-  );
+  variable_set('bibdk_helpdesk_settings', $default_values);
+
 }
+
 
 /**
  * Implements hook_block_view().
  */
 function bibdk_helpdesk_block_view($delta = '') {
+
+  $bibdk_helpdesk_settings = variable_get('bibdk_helpdesk_settings', $default = array());
 
   $block = array();
   switch ($delta) {
@@ -89,18 +84,20 @@ function bibdk_helpdesk_block_view($delta = '') {
       $block['subject'] = t('Library Helpdesk');
       $block['content'] =
         theme('bibdk_helpdesk_block', array(
-            'description' => t('You can contact a librarian, if you need a personalized service.'),
-            'link' => l(t('Ask Helpdesk'), 'overlay/helpdesk', array(
+            'description' => t($bibdk_helpdesk_settings['description']),
+            'link' => l(t($bibdk_helpdesk_settings['link']), 'overlay/helpdesk', array(
               'attributes' => array(
                 'class' => array('bibdk-popup-link', 'text-white'),
                 'rel' => array('helpdesk'),
               )
             )),
-            'image' => theme_image(array(
+            'image' => theme('image', array(
               'path' => _bibdk_get_random_helpdesk_image('normal'),
-              'attributes' => array(),
-            )),
-            'title' => t('Ask helpdesk'),
+              'alt' => t($bibdk_helpdesk_settings['title']),
+              'title' => t($bibdk_helpdesk_settings['title']),
+              'attributes' => array())
+            ),
+            'title' => t($bibdk_helpdesk_settings['title']),
           )
         );
       break;
@@ -112,6 +109,7 @@ function bibdk_helpdesk_block_view($delta = '') {
   }
   return $block;
 }
+
 
 /**
  * Helper function: Creates render arrays for blocks
@@ -145,17 +143,54 @@ function _bibdk_helpdesk_create_render_array($delta) {
   return $render;
 }
 
+
 /**
  * Helper function: Returns random image path
  * params: $size is the subfolder within /images/
  */
 function _bibdk_get_random_helpdesk_image($size) {
-  $images_path = drupal_get_path('module', 'bibdk_helpdesk') . '/images/' . $size;
-  $images = file_scan_directory($images_path, '/./', array('key' => 'filename'));
-  $image = array_rand($images);
 
-  return $images_path . '/' . $image;
+  $bibdk_helpdesk_settings = variable_get('bibdk_helpdesk_settings', $default = array());
+
+  switch ($size) {
+    case 'header':
+      $images_path = drupal_get_path('module', 'bibdk_helpdesk') . '/images/header';
+      $images = file_scan_directory($images_path, '/./', array('key' => 'filename'));
+      return $images_path . '/' . array_rand($images);;
+      break;
+    case 'normal':
+      $style['name'] = 'normal';
+      $style['module'] = 'bibdk_helpdesk';
+      $style['effects'][] = array(
+        'effect callback' => 'image_scale_effect',
+        'module' => 'image',
+        'name' => 'image_scale',
+        'data' => array(
+            'width' => $bibdk_helpdesk_settings['image']['normal']['width'],
+            'height' => $bibdk_helpdesk_settings['image']['normal']['height'],
+            'upscale' => 1,
+        ),
+        'weight' => 0,
+      );
+    default:
+      $images_path = drupal_get_path('module', 'bibdk_helpdesk') . '/images/content';
+      $images = file_scan_directory($images_path, '/./', array('key' => 'filename'));
+      $image = $images_path . '/' . array_rand($images);
+      if ( file_exists($image) ) {
+        $preview_file = image_style_path($style['name'], $image);
+        if ( !file_exists($preview_file) ) {
+          image_style_create_derivative($style, $image, $preview_file);
+        }
+        $preview_url = file_create_url($preview_file) . '?cache_bypass=' . REQUEST_TIME;
+        return $preview_url;
+      }
+
+  }
+
+  return '';
+
 }
+
 
 /**
  * Implements hook_theme().
