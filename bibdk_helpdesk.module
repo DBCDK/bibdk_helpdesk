@@ -24,7 +24,7 @@ function bibdk_helpdesk_menu() {
     'description' => 'Customize the helpdesk settings.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('bibdk_helpdesk_admin'),
-    'access arguments' => array('administer bibdk helpdesk settings'),
+    'access arguments' => array('administer blocks'),
     'file' => 'bibdk_helpdesk.admin.inc',
   );
 

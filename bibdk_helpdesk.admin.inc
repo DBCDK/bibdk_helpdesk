@@ -103,8 +103,8 @@ function bibdk_helpdesk_admin_submit($form, &$form_state) {
     'link' => check_plain($form_state['values']['bibdk_helpdesk']['link']),
     'image' => array(
       'normal' => array(
-        'height' => check_plain($form_state['values']['image']['normal']['height']),
-        'width' => check_plain($form_state['values']['image']['normal']['width']),
+        'height' => (int)$form_state['values']['image']['normal']['height'],
+        'width' => (int)$form_state['values']['image']['normal']['width'],
       ),
     ),
   );
@@ -113,7 +113,7 @@ function bibdk_helpdesk_admin_submit($form, &$form_state) {
 
   variable_set('helpdesk_submit_url', check_plain($form_state['values']['helpdesk_submit_url']));
 
-  $message[] = t('The pages have been updated.');
+  $message[] = t('The settings have been updated.');
   drupal_set_message(check_plain(implode('<br/>', array_unique($message))));
 
 }
