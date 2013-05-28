@@ -1,7 +1,10 @@
 <?php
+
 /**
+ * @file
  * Test validation of fields and form submission
  */
+
 class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
 
 //protected $profile = 'bibdk';
@@ -75,4 +78,3 @@ class BibdkHelpdeskTeaserblockTestcase extends DrupalWebTestCase {
   }
 }
 
-?>

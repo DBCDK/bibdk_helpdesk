@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Library helpdesk form
+ */
+
+/**
  * Implements hook_form().
  */
 function bibdk_helpdesk_form() {

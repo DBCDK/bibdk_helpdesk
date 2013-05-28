@@ -114,7 +114,7 @@ function bibdk_helpdesk_admin_submit($form, &$form_state) {
   variable_set('helpdesk_submit_url', check_plain($form_state['values']['helpdesk_submit_url']));
 
   $message[] = t('The pages have been updated.');
-  drupal_set_message(implode('<br/>',array_unique($message)));
+  drupal_set_message(check_plain(implode('<br/>', array_unique($message))));
 
 }
 

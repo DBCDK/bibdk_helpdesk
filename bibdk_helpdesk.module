@@ -11,7 +11,7 @@
  */
 function bibdk_helpdesk_menu() {
   $items['overlay/helpdesk'] = array(
-    'title' => t('Help desk'),
+    'title' => 'Help desk',
     'description' => 'Library helpdesk form.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('bibdk_helpdesk_form'),
@@ -55,9 +55,9 @@ function bibdk_helpdesk_block_info() {
 function bibdk_helpdesk_install() {
 
   $default_values = array(
-    'description' => t('You can contact a librarian, if you need a personalized service.'),
-    'title' => t('Ask helpdesk'),
-    'link' => t('Ask helpdesk'),
+    'description' => st('You can contact a librarian, if you need a personalized service.'),
+    'title' => st('Ask helpdesk'),
+    'link' => st('Ask helpdesk'),
     'image' => array(
       'normal' => array(
         'height' => 190,
