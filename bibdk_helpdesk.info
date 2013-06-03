@@ -6,7 +6,6 @@ package = Bibliotek.dk
 
 dependencies[] = microcurl
 dependencies[] = image
-dependencies[] = lightbox2
 
 files[] = bibdk_helpdesk.test
 
