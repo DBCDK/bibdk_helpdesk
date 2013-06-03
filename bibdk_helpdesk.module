@@ -50,28 +50,6 @@ function bibdk_helpdesk_block_info() {
 
 
 /**
- * Implements hook_install().
- */
-function bibdk_helpdesk_install() {
-
-  $default_values = array(
-    'description' => st('You can contact a librarian, if you need a personalized service.'),
-    'title' => st('Ask helpdesk'),
-    'link' => st('Ask helpdesk'),
-    'image' => array(
-      'normal' => array(
-        'height' => 190,
-        'width' => 190,
-      ),
-    ),
-  );
-
-  variable_set('bibdk_helpdesk_settings', $default_values);
-
-}
-
-
-/**
  * Implements hook_block_view().
  */
 function bibdk_helpdesk_block_view($delta = '') {
