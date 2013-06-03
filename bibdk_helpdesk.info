@@ -5,5 +5,8 @@ version = 7.x-0.8
 package = Bibliotek.dk
 
 dependencies[] = microcurl
+dependencies[] = image
 
 files[] = bibdk_helpdesk.test
+
+configure = admin/config/user-interface/bibdk_helpdesk
