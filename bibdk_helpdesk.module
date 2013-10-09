@@ -108,6 +108,7 @@ function _bibdk_helpdesk_create_render_array($delta) {
           '#href' => 'overlay/helpdesk',
           '#attributes' => array(
             'class' => array('bibdk-popup-link'),
+            'id' => array('selid_helpdesk_ask_helpdesk'),
             'data-rel' => array('helpdesk'),
           ),
         ),
