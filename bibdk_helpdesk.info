@@ -8,5 +8,6 @@ dependencies[] = microcurl
 dependencies[] = image
 
 files[] = bibdk_helpdesk.test
+files[] = client/bibdk_helpdesk.request.inc
 
 configure = admin/config/user-interface/bibdk_helpdesk
