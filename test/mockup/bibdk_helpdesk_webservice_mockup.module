@@ -2,14 +2,14 @@
 
 /**
  * @file
- * Webservice mockup of Open Agency
+ * Webservice mockup of Open Question Service
  */
-function bibdk_borchk_webservice_mockup_menu() {
+function bibdk_helpdesk_webservice_mockup_menu() {
   $items['bibdk_helpdesk_webservice'] = array(
     'page callback' => 'bibdk_helpdesk_webservice_mockup_request',
     'access callback' => 'bibdk_helpdesk_webservice_mockup_access',
   );
-  $items['bibdk_borchk_webservice/test'] = array(
+  $items['bibdk_helpdesk_webservice/test'] = array(
     'page callback' => 'bibdk_helpdesk_webservice_test',
     'access callback' => TRUE
   );
@@ -26,7 +26,7 @@ function bibdk_helpdesk_webservice_test() {
  * Faking the request and returns result. If other requests are made than on city = københavn an error will be returned.
  * @return String json
  */
-function bibdk_borchk_webservice_mockup_request() {
+function bibdk_helpdesk_webservice_mockup_request() {
    if (isset($_POST['xml'])) {
     $data = rawurldecode($_POST['xml']);
   }
@@ -42,12 +42,7 @@ function bibdk_borchk_webservice_mockup_request() {
     return;
   }
 
-  $request = $envelope->Body->children()->borrowerCheckRequest;
-  // good user
-  $gooduser = ( $request->qandaServiceName == 'bibvagtenGood' &&
-              $request->libraryCode == 'DK-872920' &&
-              $request->userId == '0019' &&
-              $request->userPincode == '0019');
+  $request = $envelope->Body->children()->createQuestionRequest;
   drupal_add_http_header('Content-Type', 'application/json');
   if( $request->qandaServiceName == 'bibvagtenGood' ) {
     $resp = file_get_contents($path.'/goodRequest.json');
@@ -57,7 +52,10 @@ function bibdk_borchk_webservice_mockup_request() {
   }
 
   else if ($request->qandaServiceName == 'bibvagtenReturn'){
-    $resp = $data;
+    $resp = json_encode($request);
+  }
+  else {
+    $resp = file_get_contents($path.'/badRequest.json');
   }
   print $resp;
 }
@@ -67,7 +65,7 @@ function bibdk_borchk_webservice_mockup_request() {
  * @param type request from ting-client
  * @return \SimpleXMLElement
  */
-function bibdk_borchk_webservice_mockup_parse_xml($soap){
+function bibdk_helpdesk_webservice_mockup_parse_xml($soap){
   $pattern = "/:?SOAP-ENV:?/";
   $replace = '';
   $xml = preg_replace($pattern, $replace, $soap);
@@ -76,6 +74,6 @@ function bibdk_borchk_webservice_mockup_parse_xml($soap){
   return $envelope;
 }
 
-function bibdk_borchk_webservice_mockup_access() {
+function bibdk_helpdesk_webservice_mockup_access() {
   return TRUE;
 }

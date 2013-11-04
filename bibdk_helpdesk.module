@@ -7,11 +7,6 @@
 
 
 /**
- *
- * TODO : write test
- */
-
-/**
  * Implements hook_menu();
  */
 function bibdk_helpdesk_menu() {
@@ -98,6 +93,9 @@ function bibdk_helpdesk_ting_client_webservice() {
  * do a request
  * */
 function bibdk_helpdesk_request($values) {
+  if (!is_array($values))
+    return null;
+
   $client = new ting_client_class();
 
   $default_values = array(

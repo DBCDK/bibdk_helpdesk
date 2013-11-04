@@ -1,5 +1,5 @@
-name = "borchk mockup"
-description = "Support module for bibdk_borchk test."
+name = "bibdk helpdesk mockup"
+description = "Support module for bibdk_helpdesk test."
 package = bibliotek.dk
 version = VERSION
 core = 7.x

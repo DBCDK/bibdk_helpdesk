@@ -30,10 +30,7 @@ function bibdk_helpdesk_form() {
     ),
     '#default_value' => '',
   );
-  $form['question']['questionTitle'] = array(
-    '#type' => 'textfield',
-    '#title' => t('title', array(), array('context' => 'bibdk_helpdesk')),
-  );
+
   $form['question']['questionContent'] = array(
     '#type' => 'textarea',
     '#title' => t('My question is'),

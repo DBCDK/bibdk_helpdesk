@@ -1,49 +1,5 @@
 <?php
 
-/**
- * @file
- * Test validation of fields and form submission
- */
-
-class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
-
-//protected $profile = 'bibdk';
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => t('Form presence and validation'),
-      'description' => t('Test if the form is present'),
-      'group' => t('Bibliotek.dk - Helpdesk'),
-    );
-  }
-
-  public function setUp() {
-    // Enable any module that you will need in your tests.
-    parent::setUp('bibdk_helpdesk', 'microcurl');
-    //$account = $this->drupalCreateUser(array('access content'));
-    //$this->drupalLogin($account);
-  }
-
-  // Test validation error if user makes no input
-  public function testNoUserInput() {
-    $this->drupalGet('overlay/helpdesk');
-    $this->drupalPost(NULL, NULL, t('Send'));
-    $this->assertText('Name field is required');
-    $this->assertText('PostalCode field is required');
-    $this->assertText('Phone field is required');
-    $this->assertText('My question is field is required');
-    $this->assertText('Please state a purpose');
-  }
-
-  // Test validation error if email has wrong format
-  public function testIncorrectEmail() {
-    $fields['CustomerEmail'] = $this->randomName(8);
-    $this->drupalPost(NULL, $fields, t('Send'));
-    $this->assertText('Email needs to be a valid email');
-  }
-}
 
 /**
  * Testing: Teaserblock and redirection to form
