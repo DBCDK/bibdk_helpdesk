@@ -27,7 +27,6 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
 
   public function tearDown(){
     parent::tearDown();
-    module_disable(array('bibdk_helpdesk_webservice_mockup'));
   }
 
   public function testRunner(){

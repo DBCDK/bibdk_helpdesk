@@ -66,7 +66,7 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
       'qandaServiceName' => 'bibvagtenReturn',
       'questionDeadline' => 'questionDeadline',
       'questionContent' => 'questionContent',
-      'output' => 'xml',
+      'outputType' => 'xml',
     );
     $result = bibdk_helpdesk_request($values);
     $this->assertTRUE(($result->agencyId == 'DK-test' &&  $result->questionContent == 'questionContent' && $result->questionDeadline == 'questionDeadline'), 'Basic value gives Ack in return');
