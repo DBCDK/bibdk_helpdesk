@@ -5,6 +5,7 @@ class bibdkHelpdeskRequest extends TingClientRequest Implements ITingClientReque
   protected $agencyId;
   protected $qandaServiceName;
   protected $userName;
+  protected $editorial;
   protected $userEmail;
   protected $userMobilePhone;
   protected $userAnswerPreference;
@@ -133,6 +134,20 @@ class bibdkHelpdeskRequest extends TingClientRequest Implements ITingClientReque
    */
   public function getQandaServiceName() {
     return $this->qandaServiceName;
+  }
+
+  /**
+   * @param mixed $editorial
+   */
+  public function setEditorial($editorial) {
+    $this->editorial = $editorial;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getEditorial() {
+    return $this->editorial;
   }
 
   /**
@@ -305,7 +320,7 @@ class bibdkHelpdeskRequest extends TingClientRequest Implements ITingClientReque
 
   public function getRequest() {
     $this->setParameter('action', 'createQuestionRequest');
-    $params = array('agencyId','qandaServiceName', 'userName', 'userEmail', 'userMobilePhone', 'userAnswerPreference', 'userAge', 'userGender', 'userPostalCode',
+    $params = array('agencyId','qandaServiceName', 'editorial' 'userName', 'userEmail', 'userMobilePhone', 'userAnswerPreference', 'userAge', 'userGender', 'userPostalCode',
       'questionTitle', 'questionContent', 'questionNote', 'questionDeadline', 'questionUsage', 'outputType'
     );
     foreach ($params as $parameter) {

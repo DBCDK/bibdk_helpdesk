@@ -48,8 +48,8 @@ function bibdk_helpdesk_form() {
     '#type' => 'radios',
     '#title' => t('The information will be used for'),
     '#options' => array(
-      'Almen interesse eller hobby' => t('General interest / hobby'),
-      'Erhverv' => t('Business'),
+      'personal' => t('General interest / hobby'),
+      'business' => t('Business'),
     ),
     '#parents' => array('questionUsage'),
     '#spawned' => TRUE,
@@ -58,10 +58,10 @@ function bibdk_helpdesk_form() {
     '#type' => 'radios',
     '#title' => t('or in connection with assignment for'),
     '#options' => array(
-      'Folkeskolen' => t('Primary school'),
-      'Gymnasium, EUC, VUC, SOSU eller anden kort videregående uddannelse' => t('Gymnasium, EUC, VUC, SOSU or other short-cycle higher education'),
-      'Mellemlang eller lang videregående uddannelse' => t('Medium-cycle higher or higher education'),
-      'Universitetsuddannelse eller forskning' => t('University education or research'),
+      'school1' => t('Primary school'),
+      'school2' => t('Gymnasium, EUC, VUC, SOSU or other short-cycle higher education'),
+      'school3' => t('Medium-cycle higher or higher education'),
+      'school4' => t('University education or research'),
     ),
     '#spawned' => TRUE,
     '#parents' => array('questionUsage'),
@@ -148,6 +148,15 @@ function bibdk_helpdesk_form_validate($form, &$form_state) {
  */
 function bibdk_helpdesk_form_submit($form, &$form_state) {
   form_state_values_clean($form_state);
+  $values = $form_state['values'];
+
+  if ($values['questionUsage'] == 'school3' || $values['questionUsage'] == 'school4'){
+    $values['editorial'] = 'Forskningsbibliotek';
+  }
+  else {
+    $values['editorial'] = 'Folkebibliotek';
+  }
+
   $response = bibdk_helpdesk_request($form_state['values']);
 
   if (isset($response->createQuestionResponse->questionReceipt->{'$'}) && $response->createQuestionResponse->questionReceipt->{'$'} == 'Ack'){
