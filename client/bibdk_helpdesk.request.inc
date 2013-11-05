@@ -320,7 +320,7 @@ class bibdkHelpdeskRequest extends TingClientRequest Implements ITingClientReque
 
   public function getRequest() {
     $this->setParameter('action', 'createQuestionRequest');
-    $params = array('agencyId','qandaServiceName', 'editorial' 'userName', 'userEmail', 'userMobilePhone', 'userAnswerPreference', 'userAge', 'userGender', 'userPostalCode',
+    $params = array('agencyId','qandaServiceName', 'editorial', 'userName', 'userEmail', 'userMobilePhone', 'userAnswerPreference', 'userAge', 'userGender', 'userPostalCode',
       'questionTitle', 'questionContent', 'questionNote', 'questionDeadline', 'questionUsage', 'outputType'
     );
     foreach ($params as $parameter) {
