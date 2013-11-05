@@ -10,6 +10,7 @@
  * Implements hook_menu();
  */
 function bibdk_helpdesk_menu() {
+
   $items['overlay/helpdesk'] = array(
     'title' => 'Help desk',
     'description' => 'Library helpdesk form.',
@@ -17,6 +18,14 @@ function bibdk_helpdesk_menu() {
     'page arguments' => array('bibdk_helpdesk_form'),
     'access arguments' => array('access content'),
     'file' => 'bibdk_helpdesk.form.inc',
+  );
+
+  $items['overlay/helpdesk/receipt'] = array(
+    'title' => t('Help desk reciept'),
+    'description' => 'Library helpdesk receipt form.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bibdk_helpdesk_receipt'),
+    'access arguments' => array('access content'),
   );
 
   $items['admin/config/user-interface/bibdk_helpdesk'] = array(
@@ -29,6 +38,77 @@ function bibdk_helpdesk_menu() {
   );
 
   return $items;
+}
+
+
+/** Returns a receipt to the user when question have been submitted
+ * @param $form
+ * @param $form_state
+ * @return mixed
+ */
+function bibdk_helpdesk_receipt($form, $form_state){
+
+
+  $form['title'] = array(
+    '#type' => 'html_tag',
+    '#tag' => 'h1',
+    '#attributes' => array(
+      'id' => 'title',
+    ),
+    '#value' => t('bibdk_helpdesk_receipt_headline'),
+  );
+
+
+  $form['contain'] = array(
+    '#type' => 'container',
+  );
+
+  $form['contain']['content'] = array(
+    '#type' => 'html_tag',
+    '#tag' => 'p',
+    '#value' =>   t('bibdk_helpdesk_receipt_text'),
+  );
+
+  $form['contain']['close'] = array(
+      '#type' => 'markup',
+      '#markup' => '<a href="JavaScript:window.close();" class="btn btn-blue form-submit" />' . t('close') . '</a>',
+  );
+
+
+  return $form;
+
+}
+
+/**
+ * Implements hook_ting_client_webservice (@see ting_client.module)
+ * */
+function bibdk_helpdesk_ting_client_webservice() {
+  $ret = array();
+  $ret['helpdesk']['class'] = 'bibdkHelpdeskRequest';
+  $ret['helpdesk']['url'] = 'bibdk_openquestion_url';
+  return $ret;
+}
+
+/**
+ * do a request
+ * */
+function bibdk_helpdesk_request($values) {
+  if (!is_array($values))
+    return null;
+
+  $client = new ting_client_class();
+
+  $default_values = array(
+    'agencyId' => variable_get('bibdk_openquestion_agencyId', FALSE),
+    'qandaServiceName' => variable_get('bibdk_openquestion_qandaServiceName', FALSE),
+    'outputType' => 'json'
+  );
+
+  $values += $default_values;
+
+  $response = $client->do_request('helpdesk', $values);
+
+  return $response;
 }
 
 
@@ -181,11 +261,47 @@ function bibdk_helpdesk_theme() {
       'path' => $path,
       'template' => 'bibdk-helpdesk-block',
     ),
-    'theme_bibdk_helpdesk_result' => array(
-      'render element' => 'form',
-      'path' => $path,
-      'template' => 'bibdk-helpdesk-result',
-    ),
   );
   return $theme_array;
+}
+
+
+/**
+ * Implements hook_form_FORM_ID_alter (ting_client_admin_webservices_settings)
+ * add field to webservice client settings
+ *
+ * */
+function bibdk_helpdesk_form_ting_client_admin_webservices_settings_alter(&$form, &$form_state) {
+  $form['openquestion'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('OpenQuestionservice settings'),
+    '#description' => t('Setting for openQuestion webservice'),
+    '#weight' => -2,
+  );
+
+  $form['openquestion']['bibdk_openquestion_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('OpenQuestionservice URL'),
+    '#description' => t('URL to openquestion e.g. https://openquestion.addi.dk/1.1/'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('bibdk_openquestion_url', FALSE),
+  );
+
+  $form['openquestion']['bibdk_openquestion_agencyId'] = array(
+    '#type' => 'textfield',
+    '#title' => t('AgencyId'),
+    '#description' => t('AgencyId for openquestion e.g. DK-190101'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('bibdk_openquestion_agencyId', FALSE),
+  );
+
+  $form['openquestion']['bibdk_openquestion_qandaServiceName'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Qanda Service Name'),
+    '#description' => t('qandaServiceName for openquestion e.g. bibliotekdk'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('bibdk_openquestion_qandaServiceName', FALSE),
+  );
+
+
 }
