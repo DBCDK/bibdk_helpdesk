@@ -157,7 +157,7 @@ function bibdk_helpdesk_form_submit($form, &$form_state) {
     $values['editorial'] = 'Folkebibliotek';
   }
 
-  $response = bibdk_helpdesk_request($form_state['values']);
+  $response = bibdk_helpdesk_request($values);
 
   if (isset($response->createQuestionResponse->questionReceipt->{'$'}) && $response->createQuestionResponse->questionReceipt->{'$'} == 'Ack'){
     drupal_goto('overlay/helpdesk/receipt');
