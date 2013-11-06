@@ -14,6 +14,11 @@ function bibdk_helpdesk_webservice_mockup_menu() {
     'access callback' => TRUE
   );
 
+  $items['bibdk_helpdesk_webservice/disable'] = array(
+    'page callback' => 'bibdk_helpdesk_webservice_disable',
+    'access callback' => TRUE
+  );
+
   return $items;
 }
 
@@ -21,6 +26,10 @@ function bibdk_helpdesk_webservice_test() {
   return '<form name="test" action="bibdk_helpdesk_webservice" method="POST" target="_blank"><textarea name="xml"></textarea><input type="submit" name="sub" value="submit"/></form>';
 }
 
+function bibdk_helpdesk_webservice_disable() {
+  module_disable(array('bibdk_helpdesk_webservice_mockup'));
+  exit;
+}
 
 /**
  * Faking the request and returns result. If other requests are made than on city = københavn an error will be returned.

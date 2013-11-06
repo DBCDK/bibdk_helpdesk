@@ -18,6 +18,19 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
     variable_set('bibdk_openquestion_agencyId', 'DK-test');
     variable_set('bibdk_openquestion_qandaServiceName', 'DK-test');
     variable_set('bibdk_openquestion_url', $this->getAbsoluteUrl('bibdk_helpdesk_webservice/'));
+  }
+
+  public function tearDown(){
+    parent::tearDown();
+    // clean up the real website
+    $path = $this->getAbsoluteUrl('/bibdk_helpdesk_webservice/disable');
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $path);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+
+    curl_exec($ch);
+    curl_close($ch);
 
 
   }

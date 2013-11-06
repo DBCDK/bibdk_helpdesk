@@ -27,6 +27,17 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
 
   public function tearDown(){
     parent::tearDown();
+    // clean up the real website
+    $path = $this->getAbsoluteUrl('/bibdk_helpdesk_webservice/disable');
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $path);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+
+    curl_exec($ch);
+    curl_close($ch);
+
+
   }
 
   public function testRunner(){
@@ -39,7 +50,7 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
   // Test validation error if user makes no input
   private function testNoUserInput() {
     $this->drupalGet('overlay/helpdesk');
-    $this->drupalPost(NULL, NULL, t('Send'));
+    $this->drupalPost(NULL, array(), t('Send'));
     $this->assertText('Name field is required');
     $this->assertText('PostalCode field is required');
     $this->assertText('My question is field is required');
@@ -48,6 +59,7 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
 
   // Test validation error if email has wrong format
   private function testEmailField() {
+    $this->drupalGet('overlay/helpdesk');
     $fields['userEmail'] = $this->randomName(8);
     $this->drupalPost(NULL, $fields, t('Send'));
     $this->assertText('Email needs to be a valid email');
@@ -55,8 +67,6 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
 
   // Test when submission fails
   private function testInValidQuestion(){
-
-    $this->drupalGet(variable_get('bibdk_openquestion_url'));
 
     // bibvagtenBad will always fail
     variable_set('bibdk_openquestion_qandaServiceName', 'bibvagtenBad');
@@ -66,7 +76,7 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
     $fields['userMobilePhone'] = '12345678';
     $fields['questionContent'] = $this->randomString(32);
     $fields['questionDeadline'] = -1;
-    $fields['questionUsage'] = 'Almen interesse eller hobby';
+    $fields['questionUsage'] = 'personal';
 
 
 
@@ -85,7 +95,7 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
     $fields['userMobilePhone'] = '12345678';
     $fields['questionContent'] = $this->randomString(32);
     $fields['questionDeadline'] = -1;
-    $fields['questionUsage'] = 'Almen interesse eller hobby';
+    $fields['questionUsage'] = 'personal';
 
     $this->drupalPost('overlay/helpdesk', $fields, t('Send'));
     $this->assertUrl('overlay/helpdesk/receipt');
