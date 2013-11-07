@@ -1,0 +1,86 @@
+<?php
+
+class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
+
+  public static function getInfo() {
+    return array (
+      'name' => t('OpenQuestion webservice test'),
+      'description' => t('Test the methods used to make openQuestion webservice requests'),
+      'group' => t('Bibliotek.dk - Helpdesk'),
+    );
+  }
+
+
+  public function setUp() {
+    module_enable(array('bibdk_helpdesk_webservice_mockup'));
+    parent::setUp(array('ting_client','bibdk_helpdesk', 'bibdk_helpdesk_webservice_mockup'));
+
+    variable_set('bibdk_openquestion_agencyId', 'DK-test');
+    variable_set('bibdk_openquestion_qandaServiceName', 'DK-test');
+    variable_set('bibdk_openquestion_url', $this->getAbsoluteUrl('bibdk_helpdesk_webservice/'));
+  }
+
+  public function tearDown(){
+    parent::tearDown();
+    // clean up the real website
+    $path = $this->getAbsoluteUrl('/bibdk_helpdesk_webservice/disable');
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $path);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+
+    curl_exec($ch);
+    curl_close($ch);
+
+
+  }
+
+  public function testRunner(){
+    $this->testRequestMethod();
+  }
+
+  private function testRequestMethod(){
+
+    // Test when values are NULL
+    $result = bibdk_helpdesk_request(null);
+    $this->assertNull($result, 'result is null');
+
+
+    // Test when values are array();
+    $values = array();
+    $result = bibdk_helpdesk_request($values);
+
+    $result = isset($result->createQuestionResponse->questionReceipt->{'$'}) ? $result->createQuestionResponse->questionReceipt->{'$'} : NULL;
+    $expected_result = 'Nack';
+
+    $this->assertEqual($result, $expected_result, 'empty array gives NACK in return');
+
+
+    // Test when request is good
+    $values = array(
+      'qandaServiceName' => 'bibvagtenGood',
+    );
+    $result = bibdk_helpdesk_request($values);
+    $result = isset($result->createQuestionResponse->questionReceipt->{'$'}) ? $result->createQuestionResponse->questionReceipt->{'$'} : NULL;
+    $expected_result = 'Ack';
+    $this->assertEqual($result, $expected_result, 'Basic value gives Ack in return');
+
+    // Test when request is bad
+    $values = array(
+      'qandaServiceName' => 'bibvagtenBad',
+    );
+    $result = bibdk_helpdesk_request($values);
+    $result = isset($result->createQuestionResponse->questionReceipt->{'$'}) ? $result->createQuestionResponse->questionReceipt->{'$'} : NULL;
+    $expected_result = 'Nack';
+    $this->assertEqual($result, $expected_result, 'Basic value gives Ack in return');
+
+    // Test variables are sent to service
+    $values = array(
+      'qandaServiceName' => 'bibvagtenReturn',
+      'questionDeadline' => 'questionDeadline',
+      'questionContent' => 'questionContent',
+    );
+    $result = bibdk_helpdesk_request($values);
+    $this->assertTRUE(($result->agencyId == 'DK-test' &&  $result->questionContent == 'questionContent' && $result->questionDeadline == 'questionDeadline'), 'Basic value gives Ack in return');
+  }
+}
