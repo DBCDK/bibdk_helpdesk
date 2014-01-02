@@ -13,6 +13,7 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
 
   public function setUp() {
     module_enable(array('bibdk_helpdesk_webservice_mockup'));
+    menu_rebuild();
     parent::setUp(array('ting_client','bibdk_helpdesk', 'bibdk_helpdesk_webservice_mockup'));
 
     variable_set('bibdk_openquestion_agencyId', 'DK-test');
