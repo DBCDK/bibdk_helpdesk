@@ -64,7 +64,7 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
     $result = bibdk_helpdesk_request($values);
     $result = isset($result->createQuestionResponse->questionReceipt->{'$'}) ? $result->createQuestionResponse->questionReceipt->{'$'} : NULL;
     $expected_result = 'Ack';
-    $this->assertEqual($result, $expected_result, 'Basic value gives Ack in return');
+    $this->assertEqual($result, $expected_result, 'Basic value gives Ack in return (1)');
 
     // Test when request is bad
     $values = array(
@@ -73,7 +73,7 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
     $result = bibdk_helpdesk_request($values);
     $result = isset($result->createQuestionResponse->questionReceipt->{'$'}) ? $result->createQuestionResponse->questionReceipt->{'$'} : NULL;
     $expected_result = 'Nack';
-    $this->assertEqual($result, $expected_result, 'Basic value gives Ack in return');
+    $this->assertEqual($result, $expected_result, 'Basic value gives Ack in return (2)');
 
     // Test variables are sent to service
     $values = array(
@@ -82,6 +82,6 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
       'questionContent' => 'questionContent',
     );
     $result = bibdk_helpdesk_request($values);
-    $this->assertTRUE(($result->agencyId == 'DK-test' &&  $result->questionContent == 'questionContent' && $result->questionDeadline == 'questionDeadline'), 'Basic value gives Ack in return');
+    $this->assertTRUE(($result->agencyId == 'DK-test' &&  $result->questionContent == 'questionContent' && $result->questionDeadline == 'questionDeadline'), 'Basic value gives Ack in return (3)');
   }
 }
