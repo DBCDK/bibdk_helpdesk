@@ -1,12 +1,7 @@
 <?php
 
-
 class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
 
-//protected $profile = 'bibdk';
-  /**
-   * Implements getInfo().
-   */
   public static function getInfo() {
     return array(
       'name' => t('Form presence and validation'),
@@ -16,28 +11,9 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
   }
 
   public function setUp() {
-    // Enable any module that you will need in your tests.
-    module_enable(array('bibdk_helpdesk_webservice_mockup'));
-    menu_rebuild();
     parent::setUp('ting_client', 'bibdk_helpdesk', 'bibdk_helpdesk_webservice_mockup');
     variable_set('bibdk_openquestion_url', $this->getAbsoluteUrl('bibdk_helpdesk_webservice/'));
     variable_set('bibdk_openquestion_agencyId', 'DK-test');
-
-  }
-
-  public function tearDown(){
-    parent::tearDown();
-    // clean up the real website
-    $path = $this->getAbsoluteUrl('/bibdk_helpdesk_webservice/disable');
-    $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_URL, $path);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-
-    curl_exec($ch);
-    curl_close($ch);
-
-
   }
 
   public function testRunner(){
@@ -78,12 +54,9 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
     $fields['questionDeadline'] = -1;
     $fields['questionUsage'] = 'personal';
 
-
-
     $this->drupalPost('overlay/helpdesk', $fields, t('Send'));
     $this->assertUrl('overlay/helpdesk');
     $this->assertText(t('drupal_bibdk_helpdesk_question_not_acknowledged'), 'Question not acknowledged');
-
   }
 
   private function testValidQuestion(){
@@ -101,9 +74,6 @@ class BibdkHelpdeskFormSubmitTestCase extends DrupalWebTestCase {
     $this->assertUrl('overlay/helpdesk/receipt');
     $this->assertNoText(t('drupal_bibdk_helpdesk_question_not_acknowledged'), 'Question Is acknowledged');
     $this->assertText(t('bibdk_helpdesk_receipt_text'), 'Receipt text is present');
-
   }
-
-
 
 }
