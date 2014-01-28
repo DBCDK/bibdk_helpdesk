@@ -13,6 +13,7 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
 
   public function setUp() {
     module_enable(array('bibdk_helpdesk_webservice_mockup'));
+    menu_rebuild();
     parent::setUp(array('ting_client','bibdk_helpdesk', 'bibdk_helpdesk_webservice_mockup'));
 
     variable_set('bibdk_openquestion_agencyId', 'DK-test');
@@ -31,7 +32,6 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
 
     curl_exec($ch);
     curl_close($ch);
-
 
   }
 
@@ -63,7 +63,8 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
     $result = bibdk_helpdesk_request($values);
     $result = isset($result->createQuestionResponse->questionReceipt->{'$'}) ? $result->createQuestionResponse->questionReceipt->{'$'} : NULL;
     $expected_result = 'Ack';
-    $this->assertEqual($result, $expected_result, 'Basic value gives Ack in return');
+    $this->assertEqual($result, $expected_result, 'Basic value gives Ack in return (1)');
+    $this->verbose(print_r($result,1));
 
     // Test when request is bad
     $values = array(
@@ -72,7 +73,8 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
     $result = bibdk_helpdesk_request($values);
     $result = isset($result->createQuestionResponse->questionReceipt->{'$'}) ? $result->createQuestionResponse->questionReceipt->{'$'} : NULL;
     $expected_result = 'Nack';
-    $this->assertEqual($result, $expected_result, 'Basic value gives Ack in return');
+    $this->assertEqual($result, $expected_result, 'Basic value gives Nack in return (2)');
+    $this->verbose(print_r($result,1));
 
     // Test variables are sent to service
     $values = array(
@@ -81,6 +83,10 @@ class BibdkHelpdeskWebserviceTestCast extends DrupalWebTestCase {
       'questionContent' => 'questionContent',
     );
     $result = bibdk_helpdesk_request($values);
-    $this->assertTRUE(($result->agencyId == 'DK-test' &&  $result->questionContent == 'questionContent' && $result->questionDeadline == 'questionDeadline'), 'Basic value gives Ack in return');
+    $this->assertTRUE(
+      ($result->agencyId == 'DK-test' &&  $result->questionContent == 'questionContent' && $result->questionDeadline == 'questionDeadline'),
+      'Basic value gives Ack in return (2)'
+    );
+    $this->verbose(print_r($result,1));
   }
 }
