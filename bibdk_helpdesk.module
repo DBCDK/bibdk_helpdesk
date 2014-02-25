@@ -155,6 +155,10 @@ function bibdk_helpdesk_block_view($delta = '') {
               'title' => t($bibdk_helpdesk_settings['title']),
               'attributes' => array())
             ),
+            'image_data' => array(
+              'path' => _bibdk_get_random_helpdesk_image('normal'),
+              'title' => t($bibdk_helpdesk_settings['title']),
+            ),
             'title' => t($bibdk_helpdesk_settings['title']),
           )
         );
