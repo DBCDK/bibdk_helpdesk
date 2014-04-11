@@ -9,6 +9,24 @@
  * Implements hook_form().
  */
 function bibdk_helpdesk_form() {
+  $logo = array(
+    '#theme' => 'image',
+    '#path' => drupal_get_path('module', 'bibdk_helpdesk') . '/images/logo/bvagt_logo.jpg',
+    '#alt' => t('Helpdesk logo', array(), array('context' => 'bibdk_helpdesk')),
+  );
+
+  $form['logo'] = array(
+    '#type' => 'link',
+    '#title' => drupal_render($logo), // has to be rendered here because link theming won't
+    '#href' => 'http://biblioteksvagten.dk',
+    '#options' => array(
+      'attributes' => array(
+        'target' => '_blank',
+      ),
+      'html' => TRUE,
+    ),
+    '#weight' => -5,
+  );
 
   // Fields related to the question
   $form['question'] = array(
